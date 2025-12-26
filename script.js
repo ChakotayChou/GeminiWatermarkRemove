@@ -171,7 +171,7 @@ class ImageProcessor {
 
         // Comparison interactions
         const startCompare = (e) => {
-            e.preventDefault(); // Prevent text selection
+            if (e && e.cancelable) e.preventDefault();
             if (!this.state.originalImage) return;
             this.elements.ctx.drawImage(this.state.originalImage, 0, 0);
         };
@@ -181,12 +181,61 @@ class ImageProcessor {
             this.elements.ctx.putImageData(this.state.processedImageData, 0, 0);
         };
 
-        this.elements.wrapper.addEventListener('mousedown', startCompare);
-        this.elements.wrapper.addEventListener('touchstart', startCompare);
+        // Interaction Logic: Click vs Long Press
+        let pressTimer;
+        let isLongPress = false;
+        const longPressDuration = 250; // ms
 
-        this.elements.wrapper.addEventListener('mouseup', endCompare);
-        this.elements.wrapper.addEventListener('touchend', endCompare);
-        this.elements.wrapper.addEventListener('mouseleave', endCompare);
+        const startPress = (e) => {
+            // Only left click or touch
+            if (e.type === 'mousedown' && e.button !== 0) return;
+
+            isLongPress = false;
+            pressTimer = setTimeout(() => {
+                isLongPress = true;
+                startCompare(e); // Trigger comparison
+            }, longPressDuration);
+        };
+
+        const endPress = (e) => {
+            clearTimeout(pressTimer);
+
+            if (isLongPress) {
+                // Was a long press -> End comparison
+                endCompare();
+            } else {
+                // Was a short click -> Open Lightbox
+                // Only if released on same element and not dragged (simple check)
+                Lightbox.open(this.state.processedImageData, this.state.originalImage);
+            }
+            isLongPress = false;
+        };
+
+        const cancelPress = () => {
+            clearTimeout(pressTimer);
+            if (isLongPress) endCompare();
+            isLongPress = false;
+        };
+
+        // prevent context menu on mobile
+        this.elements.wrapper.oncontextmenu = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        };
+
+        this.elements.wrapper.addEventListener('mousedown', startPress);
+        this.elements.wrapper.addEventListener('touchstart', (e) => {
+            // e.preventDefault(); // Might block scrolling? Test carefully.
+            // Usually better not to preventDefault on start unless we handle scroll
+            startPress(e);
+        }, { passive: true });
+
+        this.elements.wrapper.addEventListener('mouseup', endPress);
+        this.elements.wrapper.addEventListener('touchend', endPress);
+
+        this.elements.wrapper.addEventListener('mouseleave', cancelPress);
+        // touchcancel?
 
         // Append to DOM
         resultsContainer.appendChild(card);
@@ -396,5 +445,81 @@ downloadAllBtn.addEventListener('click', () => {
     });
 });
 
+// =============================================================================
+// Lightbox Controller
+// =============================================================================
+const Lightbox = {
+    elements: {
+        modal: document.getElementById('lightbox'),
+        img: document.getElementById('lightboxImage'),
+        close: document.querySelector('.lightbox-close')
+    },
+    activeOriginal: null,
+    activeProcessed: null,
+
+    init() {
+        if (!this.elements.modal) return;
+
+        this.elements.close.onclick = () => this.close();
+        this.elements.modal.onclick = (e) => {
+            if (e.target === this.elements.modal) this.close();
+        };
+
+        // Escape to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.elements.modal.style.display === 'flex') {
+                this.close();
+            }
+        });
+
+        // Long Press comparison in Lightbox
+        const start = (e) => {
+            if (e.type === 'mousedown' && e.button !== 0) return;
+            if (this.activeOriginal) {
+                this.elements.img.src = this.activeOriginal.src;
+            }
+        };
+        const end = (e) => {
+            if (this.activeProcessed) {
+                this.elements.img.src = this.activeProcessed;
+            }
+        };
+
+        this.elements.img.addEventListener('mousedown', start);
+        this.elements.img.addEventListener('touchstart', start);
+        this.elements.img.addEventListener('mouseup', end);
+        this.elements.img.addEventListener('touchend', end);
+        this.elements.img.addEventListener('mouseleave', end);
+    },
+
+    open(processedImageData, originalImage) {
+        if (!processedImageData || !originalImage) return;
+
+        // Clone/Store original
+        this.activeOriginal = originalImage;
+
+        // Convert Processed ImageData to DataURL for <img>
+        const canvas = document.createElement('canvas');
+        canvas.width = processedImageData.width;
+        canvas.height = processedImageData.height;
+        const ctx = canvas.getContext('2d');
+        ctx.putImageData(processedImageData, 0, 0);
+        this.activeProcessed = canvas.toDataURL();
+
+        // Set content
+        this.elements.img.src = this.activeProcessed;
+        this.elements.modal.style.display = 'flex';
+    },
+
+    close() {
+        this.elements.modal.style.display = 'none';
+        this.elements.img.src = '';
+        this.activeOriginal = null;
+        this.activeProcessed = null;
+    }
+};
+
 // Init
 init();
+// Initialize Lightbox
+Lightbox.init();

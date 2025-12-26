@@ -205,8 +205,12 @@ class ImageProcessor {
                 endCompare();
             } else {
                 // Was a short click -> Open Lightbox
-                // Only if released on same element and not dragged (simple check)
-                Lightbox.open(this.state.processedImageData, this.state.originalImage);
+                console.log('Short click detected, opening lightbox');
+                if (typeof Lightbox !== 'undefined') {
+                    Lightbox.open(this.state.processedImageData, this.state.originalImage);
+                } else {
+                    console.error('Lightbox is undefined');
+                }
             }
             isLongPress = false;
         };
@@ -458,6 +462,7 @@ const Lightbox = {
     activeProcessed: null,
 
     init() {
+        console.log('Lightbox initializing, modal found:', !!this.elements.modal);
         if (!this.elements.modal) return;
 
         this.elements.close.onclick = () => this.close();

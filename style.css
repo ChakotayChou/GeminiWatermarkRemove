@@ -54,7 +54,7 @@ h1 {
 
 .subtitle {
   color: var(--text-secondary);
-  font-size: 1.3rem;
+  font-size: 1rem;
   max-width: 600px;
   margin: 0 auto;
 }

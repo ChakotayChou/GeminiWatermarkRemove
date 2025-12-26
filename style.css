@@ -17,9 +17,10 @@
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 1.125rem;
   background-color: var(--bg-color);
   color: var(--text-primary);
-  line-height: 1.5;
+  line-height: 1.6;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -42,7 +43,7 @@ header {
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 4rem;
   font-weight: 800;
   background: var(--accent-gradient);
   -webkit-background-clip: text;
@@ -53,7 +54,9 @@ h1 {
 
 .subtitle {
   color: var(--text-secondary);
-  font-size: 1.1rem;
+  font-size: 1.3rem;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .features-list {
@@ -66,9 +69,9 @@ h1 {
 
 .feature-tag {
   background: rgba(255, 255, 255, 0.05);
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 9999px;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   color: var(--text-secondary);
   border: 1px solid var(--border-color);
   transition: all 0.3s ease;
@@ -105,42 +108,44 @@ h1 {
   background-color: rgba(255, 255, 255, 0.02);
 }
 
-.drop-zone:hover, .drop-zone.drag-over {
+.drop-zone:hover,
+.drop-zone.drag-over {
   border-color: #7c3aed;
   background-color: rgba(124, 58, 237, 0.05);
   transform: translateY(-2px);
 }
 
 .drop-icon {
-  width: 64px;
-  height: 64px;
-  margin-bottom: 1rem;
+  width: 96px;
+  height: 96px;
+  margin-bottom: 1.5rem;
   opacity: 0.8;
 }
 
 .drop-text h3 {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  margin-bottom: 1rem;
 }
 
 .drop-text p {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 1.2rem;
 }
 
 /* Canvas Area */
 .canvas-container {
-  display: none; /* Hidden by default */
+  display: none;
+  /* Hidden by default */
   width: 100%;
   background-color: #000;
   border-radius: 0.5rem;
   overflow: hidden;
   position: relative;
   /* Checkboard pattern for transparency */
-  background-image: 
-    linear-gradient(45deg, #1f2329 25%, transparent 25%), 
-    linear-gradient(-45deg, #1f2329 25%, transparent 25%), 
-    linear-gradient(45deg, transparent 75%, #1f2329 75%), 
+  background-image:
+    linear-gradient(45deg, #1f2329 25%, transparent 25%),
+    linear-gradient(-45deg, #1f2329 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1f2329 75%),
     linear-gradient(-45deg, transparent 75%, #1f2329 75%);
   background-size: 20px 20px;
   background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
@@ -152,9 +157,10 @@ h1 {
 
 canvas {
   display: block;
-  max-width: 100%;
+  max-width: 50%;
   height: auto;
   margin: 0 auto;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 /* Controls */
@@ -174,10 +180,10 @@ canvas {
 }
 
 .btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: all 0.2s;
   border: none;
@@ -217,8 +223,9 @@ select {
   background-color: var(--bg-color);
   color: white;
   border: 1px solid var(--border-color);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  font-size: 1.1rem;
   outline: none;
 }
 
@@ -229,9 +236,9 @@ select {
   left: 50%;
   transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.7);
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 2rem;
-  font-size: 0.8rem;
+  font-size: 1.1rem;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
@@ -267,14 +274,17 @@ select {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 footer {
   margin-top: auto;
   text-align: center;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 1.1rem;
+  padding: 2rem 0;
 }
 
 footer a {

@@ -429,7 +429,11 @@ dropZone.addEventListener('drop', (e) => {
     }
 });
 
-dropZone.addEventListener('click', () => {
+});
+
+dropZone.addEventListener('click', (e) => {
+    // Prevent file dialog if clicking on results
+    if (e.target.closest('.results-container')) return;
     fileInput.click();
 });
 

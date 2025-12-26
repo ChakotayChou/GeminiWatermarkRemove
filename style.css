@@ -114,6 +114,7 @@ body.has-files .app-card {
 }
 
 /* Upload Area */
+/* Upload Area Container (Unified) */
 .drop-zone {
   border: 2px dashed var(--border-color);
   border-radius: 1rem;
@@ -122,13 +123,46 @@ body.has-files .app-card {
   cursor: pointer;
   transition: all 0.3s ease;
   background-color: rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .drop-zone:hover,
-.drop-zone.drag-over {
+.drop-zone.dragover {
   border-color: #7c3aed;
   background-color: rgba(124, 58, 237, 0.05);
-  transform: translateY(-2px);
+}
+
+.upload-prompt {
+  padding: 2rem 0;
+  pointer-events: none;
+  /* Let clicks pass through to drop-zone */
+}
+
+/* Results Grid */
+.results-container {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 1200px) {
+  .results-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .results-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .results-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 .drop-icon {

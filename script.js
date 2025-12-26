@@ -11,7 +11,8 @@ const STATE = {
     processedImageData: null,
     isProcessing: false,
     config: {
-        forceMode: 'auto' // 'auto', 'small', 'large'
+        forceMode: 'auto', // 'auto', 'small', 'large'
+        alphaGain: 1.0
     }
 };
 
@@ -23,6 +24,8 @@ const canvas = document.getElementById('mainCanvas');
 const ctx = canvas.getContext('2d', { willReadFrequently: true });
 const loadingOverlay = document.getElementById('loadingOverlay');
 const sizeSelect = document.getElementById('sizeSelect');
+const alphaGainInput = document.getElementById('alphaGain');
+const alphaValueDisplay = document.getElementById('alphaValue');
 const downloadBtn = document.getElementById('downloadBtn');
 const processBtn = document.getElementById('processBtn'); // Acts as Reset
 
@@ -119,6 +122,7 @@ function removeWatermark(imageData) {
     const logoValue = 255.0; // The watermark is white
     const alphaThreshold = 0.002;
     const maxAlpha = 0.99; // Prevent division by zero
+    const gain = STATE.config.alphaGain;
 
     for (let my = 0; my < mask.height; my++) {
         for (let mx = 0; mx < mask.width; mx++) {
@@ -130,7 +134,7 @@ function removeWatermark(imageData) {
 
             // Mask index
             const mIdx = my * mask.width + mx;
-            let alpha = mask.alphas[mIdx];
+            let alpha = mask.alphas[mIdx] * gain; // Apply gain
 
             if (alpha < alphaThreshold) continue;
 
@@ -282,6 +286,15 @@ sizeSelect.addEventListener('change', (e) => {
     STATE.config.forceMode = e.target.value;
     if (STATE.originalImage) {
         processAndRender(); // Reprocess immediately
+    }
+});
+
+alphaGainInput.addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
+    STATE.config.alphaGain = val;
+    alphaValueDisplay.textContent = val.toFixed(2);
+    if (STATE.originalImage) {
+        processAndRender();
     }
 });
 

@@ -176,7 +176,32 @@ canvas {
 
 .options {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slider-group label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.slider-group input[type="range"] {
+  width: 150px;
+  cursor: pointer;
+  accent-color: #7c3aed;
+}
+
+#alphaValue {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-left: 0.25rem;
 }
 
 .btn {

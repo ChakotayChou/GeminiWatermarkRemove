@@ -138,6 +138,36 @@ body.has-files .app-card {
   padding: 2rem 0;
   pointer-events: none;
   /* Let clicks pass through to drop-zone */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.upload-prompt svg {
+  width: 3rem;
+  height: 3rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.upload-prompt p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.upload-prompt .text-sm {
+  font-size: 0.875rem;
+}
+
+.upload-prompt .text-xs {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.upload-prompt .text-indigo-400 {
+  color: #818cf8;
 }
 
 /* Results Grid */

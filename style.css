@@ -106,6 +106,7 @@ h1 {
   cursor: pointer;
   transition: all 0.3s ease;
   background-color: rgba(255, 255, 255, 0.02);
+  margin-top: 1rem;
 }
 
 .drop-zone:hover,
@@ -135,7 +136,6 @@ h1 {
 /* Global Actions */
 .global-actions {
   display: flex;
-  margin-bottom: 2rem;
   padding: 0 1rem;
 }
 

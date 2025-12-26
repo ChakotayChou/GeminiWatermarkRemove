@@ -1,5 +1,5 @@
 /**
- * Gemini Watermark Remover - Core Logic
+ * Gemini Watermark Remover - Batch Processing
  */
 
 const STATE = {
@@ -7,27 +7,15 @@ const STATE = {
         small: null, // { width: 48, height: 48, alphas: Float32Array }
         large: null  // { width: 96, height: 96, alphas: Float32Array }
     },
-    originalImage: null,
-    processedImageData: null,
-    isProcessing: false,
-    config: {
-        forceMode: 'auto', // 'auto', 'small', 'large'
-        alphaGain: 1.0
-    }
+    processors: [] // Store active ImageProcessor instances
 };
 
-// DOM Elements
+// Global DOM Elements
 const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
-const canvasContainer = document.getElementById('canvasContainer');
-const canvas = document.getElementById('mainCanvas');
-const ctx = canvas.getContext('2d', { willReadFrequently: true });
-const loadingOverlay = document.getElementById('loadingOverlay');
-const sizeSelect = document.getElementById('sizeSelect');
-const alphaGainInput = document.getElementById('alphaGain');
-const alphaValueDisplay = document.getElementById('alphaValue');
-const downloadBtn = document.getElementById('downloadBtn');
-const processBtn = document.getElementById('processBtn'); // Acts as Reset
+const resultsContainer = document.getElementById('resultsContainer');
+const globalActions = document.getElementById('globalActions');
+const downloadAllBtn = document.getElementById('downloadAllBtn');
 
 // =============================================================================
 // Initialization & Asset Loading
@@ -51,11 +39,8 @@ function loadMask(url, type) {
         const img = new Image();
         img.src = url;
         img.onload = () => {
-            // Convert image to alpha map
             const w = img.width;
             const h = img.height;
-
-            // Draw to a temp canvas to read pixels
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = w;
             tempCanvas.height = h;
@@ -70,7 +55,6 @@ function loadMask(url, type) {
                 const r = data[i * 4];
                 const g = data[i * 4 + 1];
                 const b = data[i * 4 + 2];
-                // Max of RGB / 255.0
                 const maxVal = Math.max(r, Math.max(g, b));
                 alphas[i] = maxVal / 255.0;
             }
@@ -83,175 +67,286 @@ function loadMask(url, type) {
 }
 
 // =============================================================================
-// Core Algorithm: Reverse Alpha Blending
+// Image Processor Class (Per Image Logic)
 // =============================================================================
 
-function removeWatermark(imageData) {
-    const w = imageData.width;
-    const h = imageData.height;
-
-    // 1. Determine size & config
-    let mode = STATE.config.forceMode;
-    if (mode === 'auto') {
-        if (w > 1024 && h > 1024) {
-            mode = 'large';
-        } else {
-            mode = 'small';
-        }
-    }
-
-    const mask = mode === 'large' ? STATE.masks.large : STATE.masks.small;
-    if (!mask) return; // Should not happen if loaded
-
-    // Config: 
-    // Small: 48x48, margin 32
-    // Large: 96x96, margin 64
-    const margin = mode === 'large' ? 64 : 32;
-
-    // Calculate position (top-left of watermark)
-    // x = Width - margin - logoSize
-    // y = Height - margin - logoSize
-    const posX = w - margin - mask.width;
-    const posY = h - margin - mask.height;
-
-    // Check bounds
-    if (posX < 0 || posY < 0) return; // Image too small
-
-    // 2. Process Pixels
-    const data = imageData.data; // Uint8ClampedArray
-    const logoValue = 255.0; // The watermark is white
-    const alphaThreshold = 0.002;
-    const maxAlpha = 0.99; // Prevent division by zero
-    const gain = STATE.config.alphaGain;
-
-    for (let my = 0; my < mask.height; my++) {
-        for (let mx = 0; mx < mask.width; mx++) {
-            // Image coordinates
-            const iy = posY + my;
-            const ix = posX + mx;
-
-            if (ix >= w || iy >= h) continue;
-
-            // Mask index
-            const mIdx = my * mask.width + mx;
-            let alpha = mask.alphas[mIdx] * gain; // Apply gain
-
-            if (alpha < alphaThreshold) continue;
-
-            // Clamp alpha
-            if (alpha > maxAlpha) alpha = maxAlpha;
-
-            const oneMinusAlpha = 1.0 - alpha;
-
-            // Image data index (4 channels per pixel)
-            const idx = (iy * w + ix) * 4;
-
-            // RGB Channels
-            for (let c = 0; c < 3; c++) {
-                const currentVal = data[idx + c];
-                // Formula: Original = (Result - Alpha * Logo) / (1 - Alpha)
-                let original = (currentVal - alpha * logoValue) / oneMinusAlpha;
-
-                // Clamp result
-                if (original < 0) original = 0;
-                if (original > 255) original = 255;
-
-                data[idx + c] = original;
-            }
-            // Alpha channel (data[idx+3]) remains unchanged (usually 255)
-        }
-    }
-
-    return imageData;
-}
-
-// =============================================================================
-// UI Logic & Event Handlers
-// =============================================================================
-
-function handleFile(file) {
-    if (!file || !file.type.startsWith('image/')) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-            STATE.originalImage = img;
-            processAndRender();
+class ImageProcessor {
+    constructor(file) {
+        this.file = file;
+        this.id = Math.random().toString(36).substr(2, 9);
+        this.config = {
+            forceMode: 'auto',
+            alphaGain: 1.0
         };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+        this.state = {
+            originalImage: null,
+            processedImageData: null,
+            isProcessing: false
+        };
+
+        // UI Elements
+        this.elements = {};
+
+        this.init();
+    }
+
+    init() {
+        this.createUI();
+        this.loadImage();
+    }
+
+    createUI() {
+        const card = document.createElement('div');
+        card.className = 'image-card';
+        card.innerHTML = `
+            <div class="image-wrapper">
+                <canvas></canvas>
+                <div class="loading-overlay">
+                    <div class="spinner"></div>
+                </div>
+                <div class="comparison-overlay">長按對比原圖</div>
+            </div>
+            
+            <div class="card-controls">
+                <div class="card-options">
+                    <div class="control-group">
+                        <select aria-label="浮水印大小">
+                            <option value="auto">自動偵測大小</option>
+                            <option value="small">強制小尺寸 (48px)</option>
+                            <option value="large">強制大尺寸 (96px)</option>
+                        </select>
+                    </div>
+                    <div class="control-group slider-group">
+                        <label>強度調整: <span class="alpha-value">1.0</span></label>
+                        <input type="range" min="0.5" max="1.5" step="0.05" value="1.0">
+                    </div>
+                </div>
+
+                <div class="actions" style="display: flex; gap: 1rem;">
+                    <button class="btn btn-secondary remove-btn" title="移除圖片">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                    <button class="btn btn-primary download-btn" disabled>
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        下載
+                    </button>
+                </div>
+            </div>
+            <div style="text-align: center; color: var(--text-secondary); font-size: 0.9rem;">
+                ${this.file.name}
+            </div>
+        `;
+
+        // Store references
+        this.elements.card = card;
+        this.elements.canvas = card.querySelector('canvas');
+        this.elements.ctx = this.elements.canvas.getContext('2d', { willReadFrequently: true });
+        this.elements.loading = card.querySelector('.loading-overlay');
+        this.elements.sizeSelect = card.querySelector('select');
+        this.elements.alphaInput = card.querySelector('input[type="range"]');
+        this.elements.alphaValue = card.querySelector('.alpha-value');
+        this.elements.downloadBtn = card.querySelector('.download-btn');
+        this.elements.removeBtn = card.querySelector('.remove-btn');
+        this.elements.wrapper = card.querySelector('.image-wrapper');
+
+        // Bind Events
+        this.elements.sizeSelect.addEventListener('change', (e) => {
+            this.config.forceMode = e.target.value;
+            this.processAndRender();
+        });
+
+        this.elements.alphaInput.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            this.config.alphaGain = val;
+            this.elements.alphaValue.textContent = val.toFixed(2);
+            this.processAndRender();
+        });
+
+        this.elements.downloadBtn.addEventListener('click', () => this.download());
+        this.elements.removeBtn.addEventListener('click', () => this.destroy());
+
+        // Comparison interactions
+        const startCompare = (e) => {
+            e.preventDefault(); // Prevent text selection
+            if (!this.state.originalImage) return;
+            this.elements.ctx.drawImage(this.state.originalImage, 0, 0);
+        };
+
+        const endCompare = () => {
+            if (!this.state.processedImageData) return;
+            this.elements.ctx.putImageData(this.state.processedImageData, 0, 0);
+        };
+
+        this.elements.wrapper.addEventListener('mousedown', startCompare);
+        this.elements.wrapper.addEventListener('touchstart', startCompare);
+
+        this.elements.wrapper.addEventListener('mouseup', endCompare);
+        this.elements.wrapper.addEventListener('touchend', endCompare);
+        this.elements.wrapper.addEventListener('mouseleave', endCompare);
+
+        // Append to DOM
+        resultsContainer.appendChild(card);
+
+        // Show Global Actions if tasks exist
+        globalActions.style.display = 'flex';
+    }
+
+    loadImage() {
+        if (!this.file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                this.state.originalImage = img;
+                this.processAndRender();
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(this.file);
+    }
+
+    processAndRender() {
+        if (!this.state.originalImage) return;
+
+        // Show Loading
+        this.elements.loading.style.display = 'flex';
+
+        setTimeout(() => {
+            const img = this.state.originalImage;
+            const canvas = this.elements.canvas;
+
+            // Set canvas size
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            // Draw original
+            this.elements.ctx.drawImage(img, 0, 0);
+
+            // Get Data
+            const imageData = this.elements.ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+            // Remove Watermark
+            this.removeWatermark(imageData);
+
+            // Put Back
+            this.elements.ctx.putImageData(imageData, 0, 0);
+
+            // Update State
+            this.state.processedImageData = imageData;
+            this.elements.loading.style.display = 'none';
+            this.elements.downloadBtn.disabled = false;
+
+        }, 50);
+    }
+
+    removeWatermark(imageData) {
+        const w = imageData.width;
+        const h = imageData.height;
+
+        // 1. Determine configuration
+        let mode = this.config.forceMode;
+        if (mode === 'auto') {
+            if (w > 1024 && h > 1024) {
+                mode = 'large';
+            } else {
+                mode = 'small';
+            }
+        }
+
+        const mask = mode === 'large' ? STATE.masks.large : STATE.masks.small;
+        if (!mask) return;
+
+        const margin = mode === 'large' ? 64 : 32;
+        const posX = w - margin - mask.width;
+        const posY = h - margin - mask.height;
+
+        if (posX < 0 || posY < 0) return;
+
+        // 2. Process
+        const data = imageData.data;
+        const logoValue = 255.0;
+        const alphaThreshold = 0.002;
+        const maxAlpha = 0.99;
+        const gain = this.config.alphaGain;
+
+        for (let my = 0; my < mask.height; my++) {
+            for (let mx = 0; mx < mask.width; mx++) {
+                const iy = posY + my;
+                const ix = posX + mx;
+
+                if (ix >= w || iy >= h) continue;
+
+                const mIdx = my * mask.width + mx;
+                let alpha = mask.alphas[mIdx] * gain;
+
+                if (alpha < alphaThreshold) continue;
+                if (alpha > maxAlpha) alpha = maxAlpha;
+
+                const oneMinusAlpha = 1.0 - alpha;
+                const idx = (iy * w + ix) * 4;
+
+                for (let c = 0; c < 3; c++) {
+                    const currentVal = data[idx + c];
+                    let original = (currentVal - alpha * logoValue) / oneMinusAlpha;
+                    if (original < 0) original = 0;
+                    if (original > 255) original = 255;
+                    data[idx + c] = original;
+                }
+            }
+        }
+    }
+
+    download() {
+        if (!this.state.processedImageData) return;
+        this.elements.canvas.toBlob((blob) => {
+            if (!blob) return;
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            // Suggest filename: "original_clean.png"
+            const nameParts = this.file.name.split('.');
+            nameParts.pop(); // remove extension
+            link.download = `${nameParts.join('.')}_clean.png`;
+            link.href = url;
+            link.click();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }, 'image/png');
+    }
+
+    destroy() {
+        // Remove from UI
+        this.elements.card.remove();
+
+        // Remove from Global List
+        STATE.processors = STATE.processors.filter(p => p !== this);
+
+        // Hide Global Actions if empty
+        if (STATE.processors.length === 0) {
+            globalActions.style.display = 'none';
+        }
+    }
 }
 
-function processAndRender() {
-    if (!STATE.originalImage) return;
+// =============================================================================
+// Global Event Handlers
+// =============================================================================
 
-    // Show Loading
-    loadingOverlay.style.display = 'flex';
-    canvasContainer.classList.add('active');
+function handleFiles(fileList) {
+    if (!fileList || fileList.length === 0) return;
 
-    // Delay slightly to let UI update
-    setTimeout(() => {
-        const img = STATE.originalImage;
+    Array.from(fileList).forEach(file => {
+        if (file.type.startsWith('image/')) {
+            const processor = new ImageProcessor(file);
+            STATE.processors.push(processor);
+        }
+    });
 
-        // Reset canvas size
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        // Draw original
-        ctx.drawImage(img, 0, 0);
-
-        // Get Pixel Data
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-        // Apply Watermark Removal
-        removeWatermark(imageData); // Modified in-place
-
-        // Put back
-        ctx.putImageData(imageData, 0, 0);
-
-        // Save state
-        STATE.processedImageData = imageData;
-
-        // UI Updates
-        loadingOverlay.style.display = 'none';
-        downloadBtn.disabled = false;
-        processBtn.disabled = false;
-        dropZone.style.display = 'none'; // Hide drop zone to show canvas
-
-    }, 50);
-}
-
-function reset() {
-    STATE.originalImage = null;
-    STATE.processedImageData = null;
-    canvas.width = 0;
-    canvas.height = 0;
-
-    canvasContainer.classList.remove('active');
-    dropZone.style.display = 'block';
-    downloadBtn.disabled = true;
-    processBtn.disabled = true;
+    // Reset file input so same file can be selected again if needed
     fileInput.value = '';
 }
-
-// Compare Feature (Hold to see original)
-canvasContainer.addEventListener('mousedown', () => {
-    if (!STATE.originalImage) return;
-    ctx.drawImage(STATE.originalImage, 0, 0);
-});
-
-canvasContainer.addEventListener('mouseup', () => {
-    if (!STATE.processedImageData) return;
-    ctx.putImageData(STATE.processedImageData, 0, 0);
-});
-
-canvasContainer.addEventListener('mouseleave', () => {
-    // If user leaves while holding click, restore processed
-    if (!STATE.processedImageData) return;
-    ctx.putImageData(STATE.processedImageData, 0, 0);
-});
 
 // Drag & Drop
 dropZone.addEventListener('dragover', (e) => {
@@ -267,7 +362,7 @@ dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
     dropZone.classList.remove('drag-over');
     if (e.dataTransfer.files.length > 0) {
-        handleFile(e.dataTransfer.files[0]);
+        handleFiles(e.dataTransfer.files);
     }
 });
 
@@ -276,50 +371,19 @@ dropZone.addEventListener('click', () => {
 });
 
 fileInput.addEventListener('change', (e) => {
-    if (e.target.files.length > 0) {
-        handleFile(e.target.files[0]);
-    }
+    handleFiles(e.target.files);
 });
 
-// Controls
-sizeSelect.addEventListener('change', (e) => {
-    STATE.config.forceMode = e.target.value;
-    if (STATE.originalImage) {
-        processAndRender(); // Reprocess immediately
-    }
-});
-
-alphaGainInput.addEventListener('input', (e) => {
-    const val = parseFloat(e.target.value);
-    STATE.config.alphaGain = val;
-    alphaValueDisplay.textContent = val.toFixed(2);
-    if (STATE.originalImage) {
-        processAndRender();
-    }
-});
-
-processBtn.addEventListener('click', reset);
-
-downloadBtn.addEventListener('click', () => {
-    if (!STATE.processedImageData) return;
-
-    // Use toBlob instead of toDataURL for better support of large images
-    canvas.toBlob((blob) => {
-        if (!blob) {
-            console.error('Canvas toBlob failed');
-            alert('Error generating image file.');
-            return;
-        }
-
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = 'cleaned_image.png';
-        link.href = url;
-        link.click();
-
-        // Clean up memory
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-    }, 'image/png');
+// Download All
+downloadAllBtn.addEventListener('click', () => {
+    let delay = 0;
+    STATE.processors.forEach(p => {
+        // Stagger downloads to prevent browser blocking
+        setTimeout(() => {
+            p.download();
+        }, delay);
+        delay += 300;
+    });
 });
 
 // Init

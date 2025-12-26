@@ -34,50 +34,28 @@
                         </path>
                     </svg>
                     <div class="drop-text">
-                        <h3>拖放圖片至此或點擊上傳</h3>
-                        <p>支援 JPG, PNG, WEBP</p>
+                        <h3>拖放多張圖片至此或點擊上傳</h3>
+                        <p>支援 JPG, PNG, WEBP (可批次處理)</p>
                     </div>
                 </div>
-                <input type="file" id="fileInput" accept="image/*" hidden>
+                <input type="file" id="fileInput" accept="image/*" multiple hidden>
             </div>
 
-            <!-- Editor / Canvas -->
-            <div id="canvasContainer" class="canvas-container">
-                <canvas id="mainCanvas"></canvas>
-                <div id="loadingOverlay" class="loading-overlay">
-                    <div class="spinner"></div>
-                </div>
-                <div class="comparison-overlay">長按對比原圖</div>
+            <!-- Global Actions (Hidden by default) -->
+            <div id="globalActions" class="global-actions"
+                style="display: none; justify-content: flex-end; margin-bottom: 1rem;">
+                <button id="downloadAllBtn" class="btn btn-primary">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    全部下載
+                </button>
             </div>
 
-            <!-- Controls -->
-            <div class="controls">
-                <div class="options">
-                    <div class="control-group">
-                        <select id="sizeSelect" aria-label="浮水印大小">
-                            <option value="auto">自動偵測大小</option>
-                            <option value="small">強制小尺寸 (48px)</option>
-                            <option value="large">強制大尺寸 (96px)</option>
-                        </select>
-                    </div>
-                    <div class="control-group slider-group">
-                        <label for="alphaGain">強度調整: <span id="alphaValue">1.0</span></label>
-                        <input type="range" id="alphaGain" min="0.5" max="1.5" step="0.05" value="1.0">
-                    </div>
-                </div>
-
-                <div class="actions" style="display: flex; gap: 1rem;">
-                    <button id="processBtn" class="btn btn-secondary" disabled>
-                        <span>重置</span>
-                    </button>
-                    <button id="downloadBtn" class="btn btn-primary" disabled>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                        </svg>
-                        下載
-                    </button>
-                </div>
+            <!-- Results List -->
+            <div id="resultsContainer" class="results-container">
+                <!-- Image Cards will be injected here -->
             </div>
         </div>
     </div>

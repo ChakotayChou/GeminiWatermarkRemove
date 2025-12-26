@@ -132,16 +132,52 @@ h1 {
   font-size: 1.2rem;
 }
 
-/* Canvas Area */
-.canvas-container {
-  display: none;
-  /* Hidden by default */
+/* Global Actions */
+.global-actions {
+  display: flex;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
+
+/* Results Container (List) */
+.results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
   width: 100%;
+}
+
+/* Image Card */
+.image-card {
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Canvas Wrapper inside Card */
+.image-wrapper {
+  position: relative;
   background-color: #000;
   border-radius: 0.5rem;
   overflow: hidden;
-  position: relative;
-  /* Checkboard pattern for transparency */
+  /* Checkboard pattern */
   background-image:
     linear-gradient(45deg, #1f2329 25%, transparent 25%),
     linear-gradient(-45deg, #1f2329 25%, transparent 25%),
@@ -149,22 +185,22 @@ h1 {
     linear-gradient(-45deg, transparent 75%, #1f2329 75%);
   background-size: 20px 20px;
   background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.canvas-container.active {
+.image-wrapper canvas {
   display: block;
-}
-
-canvas {
-  display: block;
-  max-width: 50%;
+  max-width: 100%;
+  max-height: 600px;
   height: auto;
   margin: 0 auto;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Controls */
-.controls {
+/* Card Controls */
+.card-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -174,11 +210,11 @@ canvas {
   border-top: 1px solid var(--border-color);
 }
 
-.options {
+.card-options {
   display: flex;
   gap: 1.5rem;
-  align-items: center;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .control-group {
@@ -254,26 +290,27 @@ select {
   outline: none;
 }
 
-/* Comparison Slider Overlay */
+/* Comparison Overlay */
 .comparison-overlay {
   position: absolute;
   top: 1rem;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.7);
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1rem;
   border-radius: 2rem;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
+  z-index: 5;
 }
 
-.canvas-container:hover .comparison-overlay {
+.image-wrapper:hover .comparison-overlay {
   opacity: 1;
 }
 
-/* Loading */
+/* Loading Overlay */
 .loading-overlay {
   position: absolute;
   top: 0;
@@ -287,6 +324,7 @@ select {
   z-index: 10;
   backdrop-filter: blur(4px);
   display: none;
+  /* Toggled via JS */
 }
 
 .spinner {

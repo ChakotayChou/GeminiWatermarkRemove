@@ -10,7 +10,8 @@ const STATE = {
     processors: [], // Store active ImageProcessor instances
     customLogo: {
         image: null,     // HTMLImageElement - 使用者上傳的 Logo 圖片
-        opacity: 0.8     // 0.0 ~ 1.0 - Logo 透明度
+        opacity: 0.8,    // 0.0 ~ 1.0 - Logo 透明度
+        scale: 1.0       // 0.1 ~ 2.0 - Logo 縮放比例 (預設 1.0)
     }
 };
 
@@ -27,7 +28,9 @@ const logoPreview = document.getElementById('logoPreview');
 const logoUploadArea = document.getElementById('logoUploadArea');
 const logoOpacity = document.getElementById('logoOpacity');
 const logoOpacityValue = document.getElementById('logoOpacityValue');
-const logoOpacityGroup = document.getElementById('logoOpacityGroup');
+const logoScale = document.getElementById('logoScale');
+const logoScaleValue = document.getElementById('logoScaleValue');
+const logoControls = document.getElementById('logoControls');
 const clearLogoBtn = document.getElementById('clearLogoBtn');
 
 // =============================================================================
@@ -340,7 +343,7 @@ class ImageProcessor {
         const margin = mode === 'large' ? 64 : 32;
 
         // 計算縮放比例（保持寬高比）
-        const scale = Math.min(targetSize / logo.width, targetSize / logo.height);
+        const scale = Math.min(targetSize / logo.width, targetSize / logo.height) * STATE.customLogo.scale;
         const scaledWidth = logo.width * scale;
         const scaledHeight = logo.height * scale;
 
@@ -529,7 +532,7 @@ function updateLogoPreviewUI() {
         const opacity = STATE.customLogo.opacity;
         logoPreview.innerHTML = `<img src="${STATE.customLogo.image.src}" alt="Logo Preview" style="opacity: ${opacity}">`;
         logoPreview.classList.add('has-logo');
-        logoOpacityGroup.style.display = 'block';
+        logoControls.style.display = 'block';
         clearLogoBtn.style.display = 'flex';
     } else {
         // 恢復上傳提示
@@ -541,7 +544,7 @@ function updateLogoPreviewUI() {
             <span class="upload-text">點擊上傳 Logo</span>
         `;
         logoPreview.classList.remove('has-logo');
-        logoOpacityGroup.style.display = 'none';
+        logoControls.style.display = 'none';
         clearLogoBtn.style.display = 'none';
     }
 }
@@ -597,12 +600,23 @@ logoOpacity.addEventListener('input', (e) => {
     reprocessAllImages();
 });
 
+// Logo 大小滑桿變更事件
+logoScale.addEventListener('input', (e) => {
+    const value = parseInt(e.target.value);
+    STATE.customLogo.scale = value / 100;
+    logoScaleValue.textContent = `${value}%`;
+    reprocessAllImages();
+});
+
 // 清除 Logo 按鈕事件
 clearLogoBtn.addEventListener('click', () => {
     STATE.customLogo.image = null;
     STATE.customLogo.opacity = 0.8;
+    STATE.customLogo.scale = 1.0;
     logoOpacity.value = 80;
     logoOpacityValue.textContent = '80%';
+    logoScale.value = 100;
+    logoScaleValue.textContent = '100%';
     updateLogoPreviewUI();
     reprocessAllImages();
 });

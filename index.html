@@ -64,10 +64,16 @@
                         <input type="file" id="logoInput" class="hidden" accept="image/*">
                     </div>
 
-                    <!-- Logo 透明度設定 -->
-                    <div id="logoOpacityGroup" class="logo-opacity-group" style="display: none;">
-                        <label>Logo 透明度: <span id="logoOpacityValue">80%</span></label>
-                        <input type="range" id="logoOpacity" min="0" max="100" value="80">
+                    <!-- Logo 設定控制項 (透明度 + 大小) -->
+                    <div id="logoControls" class="logo-controls" style="display: none;">
+                        <div class="logo-control-group">
+                            <label>透明度: <span id="logoOpacityValue">80%</span></label>
+                            <input type="range" id="logoOpacity" min="0" max="100" value="80">
+                        </div>
+                        <div class="logo-control-group">
+                            <label>大小: <span id="logoScaleValue">100%</span></label>
+                            <input type="range" id="logoScale" min="10" max="200" value="100">
+                        </div>
                     </div>
                 </div>
             </div>

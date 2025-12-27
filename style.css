@@ -308,26 +308,36 @@ body.has-files .app-card {
   padding: 4px;
 }
 
-.logo-opacity-group {
-  flex: 1;
-  min-width: 150px;
-  max-width: 300px;
+.logo-controls {
+  margin-top: 1rem;
+  padding: 0 1rem;
 }
 
-.logo-opacity-group label {
-  display: block;
+.logo-control-group {
+  margin-bottom: 1rem;
+}
+
+.logo-control-group:last-child {
+  margin-bottom: 0;
+}
+
+.logo-control-group label {
+  display: flex;
+  justify-content: space-between;
   font-size: 0.9rem;
   color: var(--text-secondary);
   margin-bottom: 0.5rem;
 }
 
-.logo-opacity-group #logoOpacityValue {
-  color: var(--text-primary);
+.logo-control-group span[id$="Value"] {
+  color: var(--primary-color);
   font-weight: 600;
 }
 
-.logo-opacity-group input[type="range"] {
+.logo-control-group input[type="range"] {
   width: 100%;
+  accent-color: var(--primary-color);
+  cursor: pointer;
 }
 
 .btn-small {

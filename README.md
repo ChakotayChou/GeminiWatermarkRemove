@@ -33,11 +33,11 @@
 
 1. **複製專案**：
    ```bash
-   git clone https://github.com/kevintsai1202/GeminiWatermarkTool.git
+   git clone https://github.com/kevintsai1202/GeminiWatermarkRemove.git
    ```
 2. **進入目錄**：
    ```bash
-   cd GeminiWatermarkTool
+   cd GeminiWatermarkRemove
    ```
 3. **執行**：
    直接用瀏覽器打開 `index.html` 即可使用。
@@ -46,6 +46,7 @@
    # Python 3
    python -m http.server 8000
    ```
+
    然後在瀏覽器訪問 `http://localhost:8000`。
 
 ## 📄 授權

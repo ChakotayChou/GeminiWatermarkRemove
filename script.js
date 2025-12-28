@@ -35,10 +35,99 @@ const logoControls = document.getElementById('logoControls');
 const clearLogoBtn = document.getElementById('clearLogoBtn');
 
 // =============================================================================
+// Localization Manager
+// =============================================================================
+
+const Localization = {
+    lang: 'zh-TW', // Default
+
+    init() {
+        // Auto-detect browser language
+        let userLang = navigator.language || navigator.userLanguage;
+
+        if (userLang) {
+            userLang = userLang.toLowerCase();
+            if (userLang.includes('zh')) {
+                // Determine Traditional vs Simplified
+                // zh-TW, zh-HK -> zh-TW
+                // zh-CN, zh-SG -> zh-CN
+                if (userLang.includes('cn') || userLang.includes('sg')) {
+                    this.lang = 'zh-CN';
+                } else {
+                    this.lang = 'zh-TW';
+                }
+            } else if (userLang.startsWith('ja')) {
+                this.lang = 'ja';
+            } else if (userLang.startsWith('ko')) {
+                this.lang = 'ko';
+            } else {
+                this.lang = 'en';
+            }
+        } else {
+            this.lang = 'en';
+        }
+
+        // Validate existence, fallback to en if missing
+        if (!translations[this.lang]) {
+            this.lang = 'en';
+        }
+
+        // Bind Switcher
+        const selector = document.getElementById('languageSelect');
+        if (selector) {
+            selector.value = this.lang;
+            selector.addEventListener('change', (e) => {
+                this.setLanguage(e.target.value);
+            });
+        }
+
+        this.apply();
+    },
+
+    setLanguage(langCode) {
+        if (!translations[langCode]) return;
+        this.lang = langCode;
+        this.apply();
+
+        // Refresh dynamic UI (like file cards)
+        reprocessAllUIStrings();
+    },
+
+    get(key) {
+        return translations[this.lang][key] || key;
+    },
+
+    apply() {
+        document.documentElement.lang = this.lang;
+        const elements = document.querySelectorAll('[data-i18n]');
+        elements.forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            const str = this.get(key);
+            if (el.getAttribute('data-i18n-html') === 'true') {
+                el.innerHTML = str;
+            } else {
+                el.textContent = str;
+            }
+        });
+    }
+};
+
+function reprocessAllUIStrings() {
+    // Re-render strings inside existing ImageProcessor cards
+    STATE.processors.forEach(p => p.updateStrings());
+    // Update Logo Upload Text if empty
+    updateLogoPreviewUI();
+}
+
+
+// =============================================================================
 // Initialization & Asset Loading
 // =============================================================================
 
 async function init() {
+    // Init Localization first
+    Localization.init();
+
     // Setup Worker Listener
     STATE.worker.onmessage = (e) => {
         const { type, payload, id } = e.data;
@@ -52,7 +141,7 @@ async function init() {
             const processor = STATE.processors.find(p => p.id === id);
             if (processor) {
                 processor.elements.loading.style.display = 'none';
-                alert('Processing error: ' + payload);
+                alert(Localization.get('processingError') + payload);
             }
         }
     };
@@ -72,7 +161,7 @@ async function init() {
 
     } catch (e) {
         console.error('Failed to load masks:', e);
-        alert('Failed to load watermark assets. Please check the console.');
+        alert(Localization.get('loadAssetsError'));
     }
 }
 
@@ -140,38 +229,39 @@ class ImageProcessor {
     createUI() {
         const card = document.createElement('div');
         card.className = 'image-card';
+        // Note: Using data-i18n attributes where possible or injecting strings
         card.innerHTML = `
             <div class="image-wrapper">
                 <canvas></canvas>
                 <div class="loading-overlay">
                     <div class="spinner"></div>
                 </div>
-                <div class="comparison-overlay">長按對比原圖</div>
+                <div class="comparison-overlay" data-i18n="compareTitle">${Localization.get('compareTitle')}</div>
             </div>
             
             <div class="card-controls">
                 <div class="card-options">
                     <div class="control-group">
                         <select aria-label="浮水印大小">
-                            <option value="auto">自動偵測大小</option>
-                            <option value="small">強制小尺寸 (48px)</option>
-                            <option value="large">強制大尺寸 (96px)</option>
+                            <option value="auto" data-i18n="sizeAuto">${Localization.get('sizeAuto')}</option>
+                            <option value="small" data-i18n="sizeSmall">${Localization.get('sizeSmall')}</option>
+                            <option value="large" data-i18n="sizeLarge">${Localization.get('sizeLarge')}</option>
                         </select>
                     </div>
                     <div class="control-group slider-group">
-                        <label>強度調整: <span class="alpha-value">1.0</span></label>
+                        <label><span data-i18n="strengthLabel">${Localization.get('strengthLabel')}</span> <span class="alpha-value">1.0</span></label>
                         <input type="range" min="1.0" max="3.0" step="0.1" value="1.0">
                     </div>
                 </div>
 
                 <div class="actions" style="display: flex; gap: 1rem;">
-                    <button class="btn btn-secondary compare-btn" title="按住對比 (Toggle Compare)">
+                    <button class="btn btn-secondary compare-btn" title="${Localization.get('compareTitle')}">
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                         </svg>
                     </button>
-                    <button class="btn btn-secondary remove-btn" title="移除圖片">
+                    <button class="btn btn-secondary remove-btn" title="${Localization.get('removeTitle')}">
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -180,7 +270,7 @@ class ImageProcessor {
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                         </svg>
-                        下載
+                        <span data-i18n="downloadBtn">${Localization.get('downloadBtn')}</span>
                     </button>
                 </div>
             </div>
@@ -201,6 +291,7 @@ class ImageProcessor {
         this.elements.removeBtn = card.querySelector('.remove-btn');
         this.elements.compareBtn = card.querySelector('.compare-btn');
         this.elements.wrapper = card.querySelector('.image-wrapper');
+        this.elements.compareOverlay = card.querySelector('.comparison-overlay'); // Added ref
 
         // Bind Events
         this.elements.sizeSelect.addEventListener('change', (e) => {
@@ -227,7 +318,7 @@ class ImageProcessor {
             // Add label
             const label = document.createElement('div');
             label.className = 'status-label';
-            label.textContent = 'Original';
+            label.textContent = Localization.get('originalLabel');
             this.elements.wrapper.appendChild(label);
         };
 
@@ -273,7 +364,7 @@ class ImageProcessor {
                 endCompare();
             } else {
                 // Was a short click -> Open Lightbox
-                console.log('Short click detected, opening lightbox');
+                console.log(Localization.get('shortClick'));
                 if (typeof Lightbox !== 'undefined') {
                     Lightbox.open(this.state.processedImageData, this.state.originalImage);
                 } else {
@@ -314,6 +405,22 @@ class ImageProcessor {
 
         // Update UI State
         updateUIState();
+    }
+
+    updateStrings() {
+        // Method to refresh strings when language changes
+        const l = Localization;
+        // Text Content
+        this.elements.compareOverlay.textContent = l.get('compareTitle');
+        this.elements.card.querySelector('[data-i18n="sizeAuto"]').textContent = l.get('sizeAuto');
+        this.elements.card.querySelector('[data-i18n="sizeSmall"]').textContent = l.get('sizeSmall');
+        this.elements.card.querySelector('[data-i18n="sizeLarge"]').textContent = l.get('sizeLarge');
+        this.elements.card.querySelector('[data-i18n="strengthLabel"]').textContent = l.get('strengthLabel');
+        this.elements.card.querySelector('[data-i18n="downloadBtn"]').textContent = l.get('downloadBtn');
+
+        // Titles
+        this.elements.compareBtn.title = l.get('compareTitle');
+        this.elements.removeBtn.title = l.get('removeTitle');
     }
 
     loadImage() {
@@ -432,7 +539,8 @@ class ImageProcessor {
             // Suggest filename: "original_clean.png"
             const nameParts = this.file.name.split('.');
             nameParts.pop(); // remove extension
-            link.download = `${nameParts.join('.')}_clean.png`;
+            const suffix = Localization.get('cleanSuffix');
+            link.download = `${nameParts.join('.')}${suffix}.png`;
             link.href = url;
             link.click();
             setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -485,6 +593,7 @@ function updateUIState() {
 dropZone.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropZone.classList.add('drag-over');
+    // Optional: update text to "Released to Upload"
 });
 
 dropZone.addEventListener('dragleave', () => {
@@ -547,7 +656,7 @@ function updateLogoPreviewUI() {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
             </svg>
-            <span class="upload-text">點擊上傳 Logo</span>
+            <span class="upload-text" data-i18n="uploadLogo">${Localization.get('uploadLogo')}</span>
         `;
         logoPreview.classList.remove('has-logo');
         logoControls.style.display = 'none';

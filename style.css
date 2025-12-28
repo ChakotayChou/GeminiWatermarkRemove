@@ -34,7 +34,50 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  position: relative;
+  /* For top-bar positioning */
 }
+
+/* ======================================
+   Top Bar (Language + GitHub) - NEW
+   ====================================== */
+.top-bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 100;
+}
+
+.language-switcher select {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.github-link {
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.github-link:hover {
+  color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+.github-link svg {
+  fill: currentColor;
+}
+
+/* ====================================== */
 
 /* Header */
 header {
@@ -113,7 +156,6 @@ body.has-files .app-card {
   gap: 2rem;
 }
 
-/* Upload Area */
 /* Upload Area Container (Unified) */
 .drop-zone {
   border: 2px dashed var(--border-color);
@@ -137,7 +179,6 @@ body.has-files .app-card {
 .upload-prompt {
   padding: 2rem 0;
   pointer-events: none;
-  /* Let clicks pass through to drop-zone */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -173,13 +214,18 @@ body.has-files .app-card {
 /* Results Grid */
 .results-container {
   display: grid;
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
   width: 100%;
 }
 
 @media (min-width: 1200px) {
   .results-container {
     grid-template-columns: repeat(4, 1fr);
+  }
+
+  .container {
+    max-width: 1400px;
   }
 }
 
@@ -217,7 +263,6 @@ body.has-files .app-card {
   display: flex;
   padding: 0 1rem;
   margin-bottom: 0.25rem;
-  /* Space below button */
 }
 
 /* Logo Settings */
@@ -265,7 +310,6 @@ body.has-files .app-card {
   justify-content: center;
   gap: 0.25rem;
   transition: all 0.3s ease;
-  /* 棋盤格背景顯示透明度 */
   background-image:
     linear-gradient(45deg, #1f2329 25%, transparent 25%),
     linear-gradient(-45deg, #1f2329 25%, transparent 25%),
@@ -351,22 +395,6 @@ body.has-files .app-card {
   height: 1rem;
 }
 
-/* Results Container (Grid) */
-.results-container {
-  display: grid;
-  /* Auto-fit columns: nice minimum width, stretch to fill */
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  width: 100%;
-}
-
-@media (min-width: 1200px) {
-  .container {
-    max-width: 1400px;
-    /* Keep container expansion for large screens */
-  }
-}
-
 /* Image Card */
 .image-card {
   background-color: rgba(255, 255, 255, 0.02);
@@ -378,7 +406,6 @@ body.has-files .app-card {
   gap: 1rem;
   animation: fadeIn 0.3s ease-out;
   height: 100%;
-  /* Ensure consistent height in row */
 }
 
 @keyframes fadeIn {
@@ -399,7 +426,6 @@ body.has-files .app-card {
   background-color: #000;
   border-radius: 0.5rem;
   overflow: hidden;
-  /* Checkboard pattern */
   background-image:
     linear-gradient(45deg, #1f2329 25%, transparent 25%),
     linear-gradient(-45deg, #1f2329 25%, transparent 25%),
@@ -412,7 +438,6 @@ body.has-files .app-card {
   align-items: center;
   justify-content: center;
   aspect-ratio: 4 / 3;
-  /* Fixed aspect ratio wrapper */
 }
 
 .image-wrapper canvas {
@@ -432,7 +457,6 @@ body.has-files .app-card {
   padding-top: 0.75rem;
   border-top: 1px solid var(--border-color);
   margin-top: auto;
-  /* Push to bottom */
 }
 
 .card-options {
@@ -480,7 +504,7 @@ body.has-files .app-card {
   font-size: 0.9rem;
 }
 
-#alphaValue {
+.alpha-value {
   color: var(--text-primary);
   font-weight: 600;
   margin-left: 0.25rem;
@@ -577,7 +601,6 @@ select {
   z-index: 10;
   backdrop-filter: blur(4px);
   display: none;
-  /* Toggled via JS */
 }
 
 .spinner {
@@ -616,8 +639,6 @@ footer a:hover {
 .hidden {
   display: none !important;
 }
-
-
 
 /* Lightbox */
 .lightbox {
@@ -677,19 +698,20 @@ footer a:hover {
   text-decoration: none;
   cursor: pointer;
 }
+
 /* Status Label */
 .status-label {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    background: rgba(255, 50, 50, 0.8);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    pointer-events: none;
-    z-index: 10;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    animation: fadeIn 0.2s ease;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(255, 50, 50, 0.8);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.2s ease;
 }

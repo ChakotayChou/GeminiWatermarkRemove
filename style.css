@@ -9,6 +9,14 @@
   --success-color: #10b981;
 }
 
+[data-theme="light"] {
+  --bg-color: #f3f4f6;
+  --card-bg: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --border-color: #e5e7eb;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -51,6 +59,25 @@ body {
   z-index: 100;
 }
 
+.theme-toggle {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .theme-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
 .language-switcher select {
   background-color: var(--card-bg);
   color: var(--text-primary);
@@ -70,11 +97,38 @@ body {
 
 .github-link:hover {
   color: var(--text-primary);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .github-link svg {
   fill: currentColor;
+}
+
+.github-star-count {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  margin-left: 0.5rem;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+}
+
+.github-link:hover .github-star-count {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="light"] .github-star-count {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .github-link:hover .github-star-count {
+  background: rgba(0, 0, 0, 0.1);
 }
 
 /* ====================================== */
@@ -137,11 +191,19 @@ body.has-files .app-card {
   cursor: default;
 }
 
+[data-theme="light"] .feature-tag {
+  background: rgba(0, 0, 0, 0.02);
+}
+
 .feature-tag:hover {
   background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
   color: var(--text-primary);
   border-color: #7c3aed;
+}
+
+[data-theme="light"] .feature-tag:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 /* Main Card */
@@ -168,6 +230,10 @@ body.has-files .app-card {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+[data-theme="light"] .drop-zone {
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 .drop-zone:hover,
@@ -239,6 +305,13 @@ body.has-files .app-card {
   .results-container {
     grid-template-columns: 1fr;
   }
+
+  .top-bar {
+    position: relative;
+    justify-content: center;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
 }
 
 .drop-icon {
@@ -272,6 +345,10 @@ body.has-files .app-card {
   border-radius: 0.75rem;
   padding: 1rem;
   margin-bottom: 1rem;
+}
+
+[data-theme="light"] .logo-settings {
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 .logo-header {
@@ -319,6 +396,15 @@ body.has-files .app-card {
   background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
   background-color: #0f1115;
   overflow: hidden;
+}
+
+[data-theme="light"] .logo-preview {
+  background-image:
+    linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+    linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+    linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+  background-color: #f3f4f6;
 }
 
 .logo-preview:hover {
@@ -408,6 +494,10 @@ body.has-files .app-card {
   height: 100%;
 }
 
+[data-theme="light"] .image-card {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -438,6 +528,15 @@ body.has-files .app-card {
   align-items: center;
   justify-content: center;
   aspect-ratio: 4 / 3;
+}
+
+[data-theme="light"] .image-wrapper {
+  background-color: #fff;
+  background-image:
+    linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+    linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+    linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
 }
 
 .image-wrapper canvas {
@@ -547,8 +646,17 @@ body.has-files .app-card {
   color: white;
 }
 
+[data-theme="light"] .btn-secondary {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
+}
+
 .btn-secondary:hover {
   background-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .btn:disabled {
@@ -559,7 +667,7 @@ body.has-files .app-card {
 
 select {
   background-color: var(--bg-color);
-  color: white;
+  color: var(--text-primary);
   border: 1px solid var(--border-color);
   padding: 1rem 1.5rem;
   border-radius: 0.75rem;
@@ -603,6 +711,10 @@ select {
   display: none;
 }
 
+[data-theme="light"] .loading-overlay {
+  background: rgba(255, 255, 255, 0.8);
+}
+
 .spinner {
   width: 40px;
   height: 40px;
@@ -610,6 +722,11 @@ select {
   border-left-color: #7c3aed;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+}
+
+[data-theme="light"] .spinner {
+  border-color: rgba(0, 0, 0, 0.1);
+  border-left-color: #7c3aed;
 }
 
 @keyframes spin {

@@ -160,6 +160,12 @@ async function init() {
             payload: STATE.masks
         });
 
+        // Fetch GitHub Stars
+        fetchGitHubStars();
+
+    // Init Theme
+    ThemeManager.init();
+
     } catch (e) {
         console.error('Failed to load masks:', e);
         alert(Localization.get('loadAssetsError'));
@@ -196,6 +202,24 @@ function loadMask(url, type) {
         };
         img.onerror = reject;
     });
+}
+
+function fetchGitHubStars() {
+    const starCountElement = document.getElementById('githubStarCount');
+    if (!starCountElement) return;
+
+    fetch('https://api.github.com/repos/kevintsai1202/GeminiWatermarkRemove')
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            starCountElement.textContent = data.stargazers_count;
+        })
+        .catch(error => {
+            console.error('Failed to fetch GitHub stars:', error);
+            starCountElement.textContent = '';
+        });
 }
 
 // =============================================================================
@@ -823,6 +847,57 @@ const Lightbox = {
         this.elements.img.src = '';
         this.activeOriginal = null;
         this.activeProcessed = null;
+    }
+};
+
+// =============================================================================
+// Theme Manager
+// =============================================================================
+
+const ThemeManager = {
+    theme: 'dark', // 'dark' | 'light'
+
+    init() {
+        // Load preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            this.theme = savedTheme;
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            this.theme = 'light';
+        }
+
+        // Apply
+        this.apply();
+
+        // Bind Button
+        const toggleBtn = document.getElementById('themeToggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                this.toggle();
+            });
+        }
+    },
+
+    toggle() {
+        this.theme = this.theme === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', this.theme);
+        this.apply();
+    },
+
+    apply() {
+        const toggleBtn = document.getElementById('themeToggle');
+        const sunIcon = toggleBtn?.querySelector('.sun-icon');
+        const moonIcon = toggleBtn?.querySelector('.moon-icon');
+
+        if (this.theme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+            if (sunIcon) sunIcon.style.display = 'none';
+            if (moonIcon) moonIcon.style.display = 'block';
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            if (sunIcon) sunIcon.style.display = 'block';
+            if (moonIcon) moonIcon.style.display = 'none';
+        }
     }
 };
 

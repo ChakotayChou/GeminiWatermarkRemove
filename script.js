@@ -13,7 +13,8 @@ const STATE = {
         image: null,     // HTMLImageElement - 使用者上傳的 Logo 圖片
         opacity: 0.8,    // 0.0 ~ 1.0 - Logo 透明度
         scale: 1.0       // 0.1 ~ 2.0 - Logo 縮放比例 (預設 1.0)
-    }
+    },
+    downloadFormat: 'png' // 'png' or 'jpeg' - 全域下載格式設定
 };
 
 // Global DOM Elements
@@ -532,19 +533,25 @@ class ImageProcessor {
 
     download() {
         if (!this.state.processedImageData) return;
+
+        const format = STATE.downloadFormat;
+        const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png';
+        const ext = format === 'jpeg' ? '.jpg' : '.png';
+        const quality = format === 'jpeg' ? 0.85 : undefined; // JPEG 壓縮品質
+
         this.elements.canvas.toBlob((blob) => {
             if (!blob) return;
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
-            // Suggest filename: "original_clean.png"
+            // Suggest filename: "original_clean.png" or "original_clean.jpg"
             const nameParts = this.file.name.split('.');
             nameParts.pop(); // remove extension
             const suffix = Localization.get('cleanSuffix');
-            link.download = `${nameParts.join('.')}${suffix}.png`;
+            link.download = `${nameParts.join('.')}${suffix}${ext}`;
             link.href = url;
             link.click();
             setTimeout(() => URL.revokeObjectURL(url), 1000);
-        }, 'image/png');
+        }, mimeType, quality);
     }
 
     destroy() {
@@ -632,6 +639,14 @@ downloadAllBtn.addEventListener('click', () => {
         delay += 300;
     });
 });
+
+// Download Format Selector
+const downloadFormatSelect = document.getElementById('downloadFormat');
+if (downloadFormatSelect) {
+    downloadFormatSelect.addEventListener('change', (e) => {
+        STATE.downloadFormat = e.target.value;
+    });
+}
 
 // =============================================================================
 // Logo 上傳與處理邏輯

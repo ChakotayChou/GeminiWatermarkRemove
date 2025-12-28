@@ -49,7 +49,14 @@
         <div class="app-card">
             <!-- Global Actions (Moved to Top) -->
             <div id="globalActions" class="global-actions"
-                style="display: none; justify-content: flex-end; margin-bottom: 1rem;">
+                style="display: none; justify-content: flex-end; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div class="format-selector">
+                    <label><span data-i18n="formatLabel">格式:</span></label>
+                    <select id="downloadFormat">
+                        <option value="png" data-i18n="formatPng">PNG (無損)</option>
+                        <option value="jpeg" data-i18n="formatJpeg">JPEG (壓縮)</option>
+                    </select>
+                </div>
                 <button id="downloadAllBtn" class="btn btn-primary">
                     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"

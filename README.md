@@ -15,7 +15,8 @@ A powerful web tool designed to remove localized watermarks from images generate
 - **⚙️ Smart & Manual Modes**:
   - **Auto Detect**: Automatically determines watermark size based on image resolution.
   - **Manual Selection**: Force "Small" (48px) or "Large" (96px) mode for special cases.
-- **💾 High-Quality Download**: Download processed images in PNG format with a single click.
+- **💾 High-Quality Download**: Download processed images in PNG (lossless) or JPEG (compressed) format with a single click.
+- **🌐 Multilingual Support**: Interface available in English, 繁體中文, 简体中文, 日本語, and 한국어.
 
 ## 🛠️ How It Works
 

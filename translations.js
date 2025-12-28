@@ -29,7 +29,10 @@ const translations = {
         "cleanSuffix": "_clean",
         "dragOver": "放開以開始上傳",
         "shortClick": "短按偵測，開啟 Lightbox",
-        "lightboxClose": "關閉"
+        "lightboxClose": "關閉",
+        "formatLabel": "格式:",
+        "formatPng": "PNG (無損)",
+        "formatJpeg": "JPEG (壓縮)"
     },
     "zh-CN": {
         "appTitle": "Gemini 水印去除器",
@@ -61,7 +64,10 @@ const translations = {
         "cleanSuffix": "_clean",
         "dragOver": "松开以开始上传",
         "shortClick": "检测到短按，开启 Lightbox",
-        "lightboxClose": "关闭"
+        "lightboxClose": "关闭",
+        "formatLabel": "格式:",
+        "formatPng": "PNG (无损)",
+        "formatJpeg": "JPEG (压缩)"
     },
     "en": {
         "appTitle": "Gemini Watermark Remover",
@@ -93,7 +99,10 @@ const translations = {
         "cleanSuffix": "_clean",
         "dragOver": "Release to Upload",
         "shortClick": "Short click detected, opening Lightbox",
-        "lightboxClose": "Close"
+        "lightboxClose": "Close",
+        "formatLabel": "Format:",
+        "formatPng": "PNG (Lossless)",
+        "formatJpeg": "JPEG (Compressed)"
     },
     "ja": {
         "appTitle": "Gemini 透かし除去ツール",
@@ -125,7 +134,10 @@ const translations = {
         "cleanSuffix": "_clean",
         "dragOver": "ドロップしてアップロード",
         "shortClick": "短押し検出、ライトボックスを開く",
-        "lightboxClose": "閉じる"
+        "lightboxClose": "閉じる",
+        "formatLabel": "形式:",
+        "formatPng": "PNG (可逆)",
+        "formatJpeg": "JPEG (圧縮)"
     },
     "ko": {
         "appTitle": "Gemini 워터마크 제거기",
@@ -157,6 +169,9 @@ const translations = {
         "cleanSuffix": "_clean",
         "dragOver": "놓아서 업로드 시작",
         "shortClick": "짧은 클릭 감지, 라이트박스 열기",
-        "lightboxClose": "닫기"
+        "lightboxClose": "닫기",
+        "formatLabel": "형식:",
+        "formatPng": "PNG (무손실)",
+        "formatJpeg": "JPEG (압축)"
     }
 };

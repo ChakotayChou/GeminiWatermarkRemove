@@ -30,6 +30,8 @@
 4. **调整设置**（如有需要）：如果效果不佳，可以尝试在下拉菜单中切换“Force Small”或“Force Large”。
 5. **下载**：满意后点击“Download”按钮保存图片。
 
+![Demo Usage](assets/demo_usage.png)
+
 ## 📦 安装与运行
 
 本项目为静态网页，无需安装复杂的后端环境。

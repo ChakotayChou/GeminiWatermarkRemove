@@ -30,6 +30,8 @@ This project is implemented using pure JavaScript (Canvas API). It pre-loads the
 4. **Adjust Settings** (If needed): If the result is not perfect, try switching modes in the dropdown menu ("Force Small" or "Force Large").
 5. **Download**: Click the "Download" button to save your image.
 
+![Demo Usage](assets/demo_usage.png)
+
 ## 📦 Installation & Running Locally
 
 This is a static web project requiring no complex backend environment.

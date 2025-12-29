@@ -163,13 +163,44 @@ async function init() {
         // Fetch GitHub Stars
         fetchGitHubStars();
 
-    // Init Theme
-    ThemeManager.init();
+        // Init Theme
+        ThemeManager.init();
+
+        // Init Runaway Banana Effect
+        initRunawayBananaEffect();
 
     } catch (e) {
         console.error('Failed to load masks:', e);
         alert(Localization.get('loadAssetsError'));
     }
+}
+
+function initRunawayBananaEffect() {
+    const banana = document.querySelector('.header-logo');
+    if (!banana) return;
+
+    banana.addEventListener('mouseover', () => {
+        // Calculate random position (max +/- 100px from center)
+        const maxX = 100;
+        const maxY = 50;
+
+        const randomX = (Math.random() - 0.5) * 2 * maxX;
+        const randomY = (Math.random() - 0.5) * 2 * maxY;
+
+        // Also add a random rotation (max +/- 45 deg)
+        const randomRot = (Math.random() - 0.5) * 60;
+
+        // Apply transform
+        banana.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRot}deg) scale(1.1)`;
+    });
+
+    // Optional: Reset when mouse leaves header area or after timeout?
+    // For now, let it stay "run away" to be playful, or reset after 1 second
+    banana.addEventListener('mouseout', () => {
+        setTimeout(() => {
+            banana.style.transform = ''; // Reset to center
+        }, 1000);
+    });
 }
 
 function loadMask(url, type) {
@@ -221,6 +252,7 @@ function fetchGitHubStars() {
             starCountElement.textContent = '';
         });
 }
+
 
 // =============================================================================
 // Image Processor Class (Per Image Logic)

@@ -30,6 +30,8 @@
 4. **調整設定**（如有需要）：如果效果不佳，可以嘗試在下拉選單中切換「Force Small」或「Force Large」。
 5. **下載**：滿意後點擊「Download」按鈕保存圖片。
 
+![Demo Usage](assets/demo_usage.png)
+
 ## 📦 安裝與執行
 
 本專案為靜態網頁，無需安裝複雜的後端環境。

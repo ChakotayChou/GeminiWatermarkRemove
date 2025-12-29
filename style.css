@@ -47,89 +47,125 @@ body {
 }
 
 /* ======================================
-   Top Bar (Language + GitHub) - NEW
+   Top Nav - Unified Floating Bar
    ====================================== */
-.top-bar {
+.top-nav {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 1rem;
+  right: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 4px;
+  padding: 4px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 100;
 }
 
-.theme-toggle {
-  background: none;
+/* Nav Button (Shared Style) */
+.nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: transparent;
   border: none;
+  border-radius: 8px;
   color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
-.theme-toggle:hover {
+.nav-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
   color: var(--text-primary);
+}
+
+[data-theme="dark"] .nav-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-btn svg {
+  flex-shrink: 0;
+}
+
+/* Nav Divider */
+.nav-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-color);
+  margin: 0 2px;
+}
+
+/* Nav Select (Language) */
+.nav-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 6px 24px 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 500;
+  transition: all 0.15s ease;
+
+  /* Custom Arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  background-size: 14px;
+}
+
+.nav-select:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .nav-select:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-[data-theme="light"] .theme-toggle:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+.nav-select:focus {
+  outline: none;
 }
 
-.language-switcher select {
-  background-color: var(--card-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-size: 0.9rem;
+/* GitHub Button Special */
+.nav-github svg {
+  width: 16px;
+  height: 16px;
 }
 
-.github-link {
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  transition: color 0.2s, transform 0.2s;
-}
-
-.github-link:hover {
-  color: var(--text-primary);
-  transform: scale(1.05);
-}
-
-.github-link svg {
-  fill: currentColor;
-}
-
-.github-star-count {
-  font-size: 0.9rem;
+.star-badge {
+  background: rgba(0, 0, 0, 0.08);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.1);
-  padding: 0.2rem 0.5rem;
-  border-radius: 9999px;
-  margin-left: 0.5rem;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.5rem;
+  min-width: 20px;
+  text-align: center;
 }
 
-.github-link:hover .github-star-count {
-  background: rgba(255, 255, 255, 0.2);
+[data-theme="dark"] .star-badge {
+  background: rgba(255, 255, 255, 0.15);
 }
 
-[data-theme="light"] .github-star-count {
-  background: rgba(0, 0, 0, 0.05);
+.star-badge:empty {
+  display: none;
 }
 
-[data-theme="light"] .github-link:hover .github-star-count {
-  background: rgba(0, 0, 0, 0.1);
-}
+/* ====================================== */
 
 /* ====================================== */
 
@@ -147,7 +183,29 @@ h1 {
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
   letter-spacing: -0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
 }
+
+.header-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Bouncy transition */
+  cursor: pointer;
+  /* Indication it's interactive */
+  z-index: 10;
+  position: relative;
+}
+
+/* Remove :hover here because JS handles the transform */
+/* .header-logo:hover {
+    transform: rotate(10deg) scale(1.1);
+} */
 
 .subtitle {
   color: var(--text-secondary);
@@ -306,11 +364,26 @@ body.has-files .app-card {
     grid-template-columns: 1fr;
   }
 
-  .top-bar {
+  /* Mobile: Make nav relative and center it */
+  .top-nav {
     position: relative;
-    justify-content: center;
-    margin-bottom: 1rem;
-    width: 100%;
+    top: 0;
+    right: 0;
+    margin: 0 auto 1rem auto;
+    width: fit-content;
+  }
+
+  /* Add spacing for header below nav */
+  header {
+    margin-top: 0.5rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
   }
 }
 

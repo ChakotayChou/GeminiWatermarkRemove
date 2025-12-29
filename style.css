@@ -183,23 +183,28 @@ h1 {
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
   letter-spacing: -0.05em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
+  display: inline-block;
+  /* Changed from flex to inline-block */
+  position: relative;
+  /* For absolute positioning of logo */
+  white-space: nowrap;
+  /* Prevent line break */
 }
 
 .header-logo {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  /* Bouncy transition */
   cursor: pointer;
-  /* Indication it's interactive */
   z-index: 10;
-  position: relative;
+  position: absolute;
+  /* Float over text */
+  left: -20px;
+  /* Offset to the left */
+  top: -10px;
+  /* Offset to the top */
 }
 
 /* Remove :hover here because JS handles the transform */
@@ -380,7 +385,18 @@ body.has-files .app-card {
   }
 
   h1 {
-    font-size: 2.5rem;
+    font-size: 1.75rem;
+    /* Smaller on mobile */
+    white-space: nowrap;
+    /* Keep in one line */
+  }
+
+  .header-logo {
+    width: 32px;
+    /* Smaller logo on mobile */
+    height: 32px;
+    left: -12px;
+    top: -8px;
   }
 
   .subtitle {

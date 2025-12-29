@@ -4,6 +4,14 @@
 
 这是一个强大的网页工具，专门设计用于去除由 Google Gemini 生成图片中的水印。此工具完全在浏览器端运行，无需将图片上传至服务器，确保您的隐私安全。
 
+## 🖼️ 实际演示
+
+<div align="center">
+  <img src="assets/demo_preview_1.png" alt="实际演示 1" width="45%">
+  <img src="assets/demo_preview_2.png" alt="实际演示 2" width="45%">
+</div>
+
+
 ## ✨ 主要功能
 
 - **🚫 自动去除水印**：利用逆向 Alpha 混合算法（Reverse Alpha Blending），精确还原被水印覆盖的像素。

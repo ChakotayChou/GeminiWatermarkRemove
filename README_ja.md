@@ -4,6 +4,14 @@
 
 Google Geminiが生成した画像の透かしを除去するために特別に設計された強力なWebツールです。このツールは完全にブラウザ上で動作し、画像をサーバーにアップロードする必要がないため、プライバシーが確保されます。
 
+## 🖼️ デモ
+
+<div align="center">
+  <img src="assets/demo_preview_1.png" alt="デモ 1" width="45%">
+  <img src="assets/demo_preview_2.png" alt="デモ 2" width="45%">
+</div>
+
+
 ## ✨ 主な機能
 
 - **🚫 自動透かし除去**：逆アルファブレンドアルゴリズム（Reverse Alpha Blending）を利用して、透かしで覆われたピクセルを正確に復元します。

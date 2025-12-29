@@ -4,6 +4,14 @@
 
 Google Gemini가 생성한 이미지의 워터마크를 제거하도록 특별히 설계된 강력한 웹 도구입니다. 이 도구는 브라우저에서 완전히 실행되므로 이미지를 서버에 업로드할 필요가 없어 개인 정보가 안전하게 보호됩니다.
 
+## 🖼️ 데모
+
+<div align="center">
+  <img src="assets/demo_preview_1.png" alt="데모 1" width="45%">
+  <img src="assets/demo_preview_2.png" alt="데모 2" width="45%">
+</div>
+
+
 ## ✨ 주요 기능
 
 - **🚫 자동 워터마크 제거**: 역 알파 블렌딩 알고리즘(Reverse Alpha Blending)을 사용하여 워터마크로 덮인 픽셀을 정밀하게 복원합니다.

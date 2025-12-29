@@ -4,6 +4,14 @@
 
 這是一個強大的網頁工具，專門設計用於去除由 Google Gemini 生成圖片中的浮水印。此工具完全在瀏覽器端運行，無需將圖片上傳至伺服器，確保您的隱私安全。
 
+## 🖼️ 實際演示
+
+<div align="center">
+  <img src="assets/demo_preview_1.png" alt="實際演示 1" width="45%">
+  <img src="assets/demo_preview_2.png" alt="實際演示 2" width="45%">
+</div>
+
+
 ## ✨ 主要功能
 
 - **🚫 自動去除浮水印**：利用逆向 Alpha 混合演算法（Reverse Alpha Blending），精確還原被浮水印覆蓋的像素。

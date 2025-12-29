@@ -423,7 +423,7 @@ class ImageProcessor {
                 // Was a short click -> Open Lightbox
                 console.log(Localization.get('shortClick'));
                 if (typeof Lightbox !== 'undefined') {
-                    Lightbox.open(this.state.processedImageData, this.state.originalImage);
+                    Lightbox.open(this.state.processedImageData, this.state.originalImage, this);
                 } else {
                     console.error('Lightbox is undefined');
                 }
@@ -815,6 +815,9 @@ if (downloadFormatSelect) {
  * 根據 STATE.customLogo.image 是否存在來切換顯示狀態
  */
 function updateLogoPreviewUI() {
+    const logoThumbnail = document.getElementById('logoThumbnail');
+    const logoThumbnailImg = document.getElementById('logoThumbnailImg');
+
     if (STATE.customLogo.image) {
         // 顯示 Logo 預覽圖片（套用透明度效果）
         const opacity = STATE.customLogo.opacity;
@@ -822,6 +825,12 @@ function updateLogoPreviewUI() {
         logoPreview.classList.add('has-logo');
         logoControls.style.display = 'block';
         clearLogoBtn.style.display = 'flex';
+
+        // 更新縮圖指示器
+        if (logoThumbnail && logoThumbnailImg) {
+            logoThumbnailImg.src = STATE.customLogo.image.src;
+            logoThumbnail.style.display = 'block';
+        }
     } else {
         // 恢復上傳提示
         logoPreview.innerHTML = `
@@ -834,6 +843,11 @@ function updateLogoPreviewUI() {
         logoPreview.classList.remove('has-logo');
         logoControls.style.display = 'none';
         clearLogoBtn.style.display = 'none';
+
+        // 隱藏縮圖指示器
+        if (logoThumbnail) {
+            logoThumbnail.style.display = 'none';
+        }
     }
 }
 
@@ -844,6 +858,22 @@ function updateLogoPreviewUI() {
 function reprocessAllImages() {
     STATE.processors.forEach(p => {
         p.processAndRender();
+    });
+}
+
+// =============================================================================
+// Logo 設定區塊展開/收合邏輯
+// =============================================================================
+
+const logoSettings = document.getElementById('logoSettings');
+const logoToggleHeader = document.getElementById('logoToggleHeader');
+
+if (logoToggleHeader) {
+    logoToggleHeader.addEventListener('click', (e) => {
+        // 如果點擊的是清除按鈕，不觸發展開/收合
+        if (e.target.closest('#clearLogoBtn')) return;
+
+        logoSettings.classList.toggle('collapsed');
     });
 }
 
@@ -916,11 +946,18 @@ const Lightbox = {
     elements: {
         modal: document.getElementById('lightbox'),
         img: document.getElementById('lightboxImage'),
-        close: document.querySelector('.lightbox-close')
+        close: document.querySelector('.lightbox-close'),
+        prev: document.getElementById('lightboxPrev'),
+        next: document.getElementById('lightboxNext')
     },
     activeOriginal: null,
     activeProcessed: null,
+    currentIndex: -1,  // 當前顯示圖片的索引
 
+    /**
+     * 初始化 Lightbox 控制器
+     * 綁定關閉、導航箭頭與鍵盤事件
+     */
     init() {
         console.log('Lightbox initializing, modal found:', !!this.elements.modal);
         if (!this.elements.modal) return;
@@ -930,10 +967,30 @@ const Lightbox = {
             if (e.target === this.elements.modal) this.close();
         };
 
-        // Escape to close
+        // 導航箭頭點擊事件
+        if (this.elements.prev) {
+            this.elements.prev.onclick = (e) => {
+                e.stopPropagation();
+                this.navigate(-1);
+            };
+        }
+        if (this.elements.next) {
+            this.elements.next.onclick = (e) => {
+                e.stopPropagation();
+                this.navigate(1);
+            };
+        }
+
+        // 鍵盤事件：Escape 關閉, 左右方向鍵導航
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.elements.modal.style.display === 'flex') {
+            if (this.elements.modal.style.display !== 'flex') return;
+
+            if (e.key === 'Escape') {
                 this.close();
+            } else if (e.key === 'ArrowLeft') {
+                this.navigate(-1);
+            } else if (e.key === 'ArrowRight') {
+                this.navigate(1);
             }
         });
 
@@ -957,8 +1014,21 @@ const Lightbox = {
         this.elements.img.addEventListener('mouseleave', end);
     },
 
-    open(processedImageData, originalImage) {
+    /**
+     * 開啟 Lightbox 顯示圖片
+     * @param {ImageData} processedImageData - 處理後的圖片資料
+     * @param {HTMLImageElement} originalImage - 原始圖片
+     * @param {ImageProcessor} processor - 圖片處理器實例（用於確定索引）
+     */
+    open(processedImageData, originalImage, processor) {
         if (!processedImageData || !originalImage) return;
+
+        // 找到當前圖片在 processors 陣列中的索引
+        if (processor) {
+            this.currentIndex = STATE.processors.indexOf(processor);
+        } else {
+            this.currentIndex = -1;
+        }
 
         // Clone/Store original
         this.activeOriginal = originalImage;
@@ -974,13 +1044,86 @@ const Lightbox = {
         // Set content
         this.elements.img.src = this.activeProcessed;
         this.elements.modal.style.display = 'flex';
+
+        // 更新導航箭頭顯示狀態
+        this.updateNavVisibility();
     },
 
+    /**
+     * 導航到上一張或下一張圖片
+     * @param {number} direction - -1 表示上一張，1 表示下一張
+     */
+    navigate(direction) {
+        const total = STATE.processors.length;
+        if (total <= 1) return;
+
+        const newIndex = this.currentIndex + direction;
+
+        // 邊界檢查
+        if (newIndex < 0 || newIndex >= total) return;
+
+        const targetProcessor = STATE.processors[newIndex];
+        if (!targetProcessor || !targetProcessor.state.processedImageData) return;
+
+        // 更新當前索引
+        this.currentIndex = newIndex;
+
+        // 更新顯示的圖片
+        this.activeOriginal = targetProcessor.state.originalImage;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = targetProcessor.state.processedImageData.width;
+        canvas.height = targetProcessor.state.processedImageData.height;
+        const ctx = canvas.getContext('2d');
+        ctx.putImageData(targetProcessor.state.processedImageData, 0, 0);
+        this.activeProcessed = canvas.toDataURL();
+
+        this.elements.img.src = this.activeProcessed;
+
+        // 更新導航箭頭顯示狀態
+        this.updateNavVisibility();
+    },
+
+    /**
+     * 更新導航箭頭的顯示狀態
+     * 第一張只顯示右箭頭，最後一張只顯示左箭頭
+     */
+    updateNavVisibility() {
+        const total = STATE.processors.length;
+
+        if (!this.elements.prev || !this.elements.next) return;
+
+        // 只有一張或沒有圖片時，隱藏所有箭頭
+        if (total <= 1) {
+            this.elements.prev.classList.add('hidden');
+            this.elements.next.classList.add('hidden');
+            return;
+        }
+
+        // 第一張：隱藏左箭頭
+        if (this.currentIndex <= 0) {
+            this.elements.prev.classList.add('hidden');
+        } else {
+            this.elements.prev.classList.remove('hidden');
+        }
+
+        // 最後一張：隱藏右箭頭
+        if (this.currentIndex >= total - 1) {
+            this.elements.next.classList.add('hidden');
+        } else {
+            this.elements.next.classList.remove('hidden');
+        }
+    },
+
+    /**
+     * 關閉 Lightbox
+     */
     close() {
         this.elements.modal.style.display = 'none';
         this.elements.img.src = '';
         this.activeOriginal = null;
         this.activeProcessed = null;
+        this.currentIndex = -1;
     }
 };
 

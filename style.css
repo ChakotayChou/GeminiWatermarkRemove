@@ -379,6 +379,14 @@ body.has-files .app-card {
     width: fit-content;
   }
 
+  /* Mobile: Language selector - narrow width for emoji only */
+  .nav-select {
+    max-width: 55px;
+    padding-right: 20px;
+    text-overflow: clip;
+    overflow: hidden;
+  }
+
   /* Add spacing for header below nav */
   header {
     margin-top: 0.5rem;
@@ -455,13 +463,25 @@ body.has-files .app-card {
 
   .logo-header {
     margin-bottom: 0.5rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    /* Prevent wrapping */
     gap: 0.5rem;
+  }
+
+  .logo-header-left {
+    flex: 1;
+    min-width: 0;
+    /* Allow shrinking */
+    overflow: hidden;
   }
 
   .logo-title {
     font-size: 0.85rem;
     flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
   }
 
   /* Clear Logo Button: X icon only on mobile */
@@ -475,15 +495,19 @@ body.has-files .app-card {
   }
 
   .logo-content {
-    flex-direction: column;
-    /* Stack vertically on mobile */
-    align-items: flex-start;
-    gap: 0.5rem;
+    flex-direction: row;
+    /* Horizontal layout on mobile */
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: nowrap;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .logo-preview {
     width: 60px;
     height: 60px;
+    flex-shrink: 0;
   }
 
   .logo-preview .upload-text {
@@ -492,18 +516,28 @@ body.has-files .app-card {
   }
 
   .logo-controls {
-    width: 100%;
-    /* Full width for sliders */
+    flex: 1;
+    min-width: 0;
+    /* Allow shrinking below content size */
     padding: 0;
-    margin-top: 0.5rem;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
   .logo-control-group {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
   }
 
   .logo-control-group label {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .logo-control-group input[type="range"] {
+    width: 100%;
+    max-width: 100%;
   }
 
 
@@ -559,13 +593,14 @@ body.has-files .app-card {
   margin-bottom: 0.25rem;
 }
 
-/* Logo Settings */
+/* Logo Settings (Collapsible) */
 .logo-settings {
   background-color: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border-color);
   border-radius: 0.75rem;
   padding: 1rem;
   margin-bottom: 1rem;
+  transition: all 0.3s ease;
 }
 
 [data-theme="light"] .logo-settings {
@@ -576,7 +611,25 @@ body.has-files .app-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.logo-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-toggle-icon {
+  transition: transform 0.3s ease;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+/* 展開狀態：箭頭向下旋轉 */
+.logo-settings:not(.collapsed) .logo-toggle-icon {
+  transform: rotate(90deg);
 }
 
 .logo-title {
@@ -585,11 +638,41 @@ body.has-files .app-card {
   color: var(--text-primary);
 }
 
+/* Logo 縮圖指示器（收合時顯示已設定狀態） */
+.logo-thumbnail {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 2px solid var(--success-color);
+  overflow: hidden;
+  background-color: var(--card-bg);
+  flex-shrink: 0;
+}
+
+.logo-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Logo 內容區塊（可收合） */
 .logo-content {
   display: flex;
   gap: 1.5rem;
   align-items: center;
   flex-wrap: wrap;
+  max-height: 200px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, margin-top 0.3s ease, opacity 0.3s ease;
+  margin-top: 0.75rem;
+  opacity: 1;
+}
+
+/* 收合狀態 */
+.logo-settings.collapsed .logo-content {
+  max-height: 0;
+  margin-top: 0;
+  opacity: 0;
 }
 
 .logo-upload-area {
@@ -1059,6 +1142,70 @@ footer a:hover {
   color: #bbb;
   text-decoration: none;
   cursor: pointer;
+}
+
+/* Lightbox Navigation Arrows */
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1002;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.lightbox-nav:hover {
+  background: rgba(124, 58, 237, 0.8);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox-nav svg {
+  width: 28px;
+  height: 28px;
+}
+
+.lightbox-prev {
+  left: 20px;
+}
+
+.lightbox-next {
+  right: 20px;
+}
+
+/* 隱藏導航箭頭的狀態 */
+.lightbox-nav.hidden {
+  display: none !important;
+}
+
+/* 響應式設計：手機版 */
+@media (max-width: 767px) {
+  .lightbox-nav {
+    width: 40px;
+    height: 40px;
+  }
+
+  .lightbox-nav svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .lightbox-prev {
+    left: 10px;
+  }
+
+  .lightbox-next {
+    right: 10px;
+  }
 }
 
 /* Status Label */

@@ -5,13 +5,13 @@ const translations = {
         "featureFree": "✨ 免費快速",
         "featureLocal": "💻 不佔資源",
         "featureQuality": "🖼️ 保持原圖解析度",
-        "downloadAll": "全部下載",
+        "downloadAll": "全部下載 (ZIP)",
         "logoTitle": "🎨 自訂 Logo（選填）",
         "clearLogo": "清除 Logo",
         "uploadLogo": "點擊上傳 Logo",
         "opacityLabel": "透明度:",
         "scaleLabel": "大小:",
-        "dropPrompt": "<span class=\"font-medium text-indigo-400\">拖放多張圖片至此</span> 或點擊上傳",
+        "dropPrompt": "<span class=\"font-medium text-indigo-400\">拖放多張圖片</span>、貼上 (Ctrl+V) 或點擊上傳",
         "dropSubtext": "支援 JPG, PNG, WEBP (可批次處理)",
         "footerCredits": "凱文大叔製作",
         "footerLocal": "於您的瀏覽器本地運行。",
@@ -32,7 +32,8 @@ const translations = {
         "lightboxClose": "關閉",
         "formatLabel": "格式:",
         "formatPng": "PNG (無損)",
-        "formatJpeg": "JPEG (壓縮)"
+        "formatJpeg": "JPEG (壓縮)",
+        "zipFolderName": "gemini_去除浮水印"
     },
     "zh-CN": {
         "appTitle": "Gemini 水印去除器",
@@ -40,13 +41,13 @@ const translations = {
         "featureFree": "✨ 免费快速",
         "featureLocal": "💻 不占资源",
         "featureQuality": "🖼️ 保持原图分辨率",
-        "downloadAll": "全部下载",
+        "downloadAll": "全部下载 (ZIP)",
         "logoTitle": "🎨 自定义 Logo（选填）",
         "clearLogo": "清除 Logo",
         "uploadLogo": "点击上传 Logo",
         "opacityLabel": "透明度:",
         "scaleLabel": "大小:",
-        "dropPrompt": "<span class=\"font-medium text-indigo-400\">拖放多张图片至此</span> 或点击上传",
+        "dropPrompt": "<span class=\"font-medium text-indigo-400\">拖放多张图片</span>、粘贴 (Ctrl+V) 或点击上传",
         "dropSubtext": "支持 JPG, PNG, WEBP (可批量处理)",
         "footerCredits": "凯文大叔制作",
         "footerLocal": "于您的浏览器本地运行。",
@@ -67,7 +68,8 @@ const translations = {
         "lightboxClose": "关闭",
         "formatLabel": "格式:",
         "formatPng": "PNG (无损)",
-        "formatJpeg": "JPEG (压缩)"
+        "formatJpeg": "JPEG (压缩)",
+        "zipFolderName": "gemini_去除水印"
     },
     "en": {
         "appTitle": "Gemini Watermark Remover",
@@ -75,13 +77,13 @@ const translations = {
         "featureFree": "✨ Free & Fast",
         "featureLocal": "💻 Client-side Processing",
         "featureQuality": "🖼️ Original Quality Kept",
-        "downloadAll": "Download All",
+        "downloadAll": "Download All (ZIP)",
         "logoTitle": "🎨 Custom Logo (Optional)",
         "clearLogo": "Clear Logo",
         "uploadLogo": "Click to Upload Logo",
         "opacityLabel": "Opacity:",
         "scaleLabel": "Size:",
-        "dropPrompt": "<span class=\"font-medium text-indigo-400\">Drop images here</span> or click to upload",
+        "dropPrompt": "<span class=\"font-medium text-indigo-400\">Drop images</span>, Paste (Ctrl+V) or click to upload",
         "dropSubtext": "Supports JPG, PNG, WEBP (Batch Processing)",
         "footerCredits": "Made by Uncle Kevin",
         "footerLocal": "Runs locally in your browser.",
@@ -102,7 +104,8 @@ const translations = {
         "lightboxClose": "Close",
         "formatLabel": "Format:",
         "formatPng": "PNG (Lossless)",
-        "formatJpeg": "JPEG (Compressed)"
+        "formatJpeg": "JPEG (Compressed)",
+        "zipFolderName": "gemini_clean"
     },
     "ja": {
         "appTitle": "Gemini 透かし除去ツール",
@@ -110,13 +113,13 @@ const translations = {
         "featureFree": "✨ 無料＆高速",
         "featureLocal": "💻 ローカル処理",
         "featureQuality": "🖼️ 元の画質を維持",
-        "downloadAll": "すべてダウンロード",
+        "downloadAll": "すべてダウンロード (ZIP)",
         "logoTitle": "🎨 カスタムロゴ（任意）",
         "clearLogo": "ロゴを削除",
         "uploadLogo": "ロゴをアップロード",
         "opacityLabel": "不透明度:",
         "scaleLabel": "サイズ:",
-        "dropPrompt": "<span class=\"font-medium text-indigo-400\">画像をここにドロップ</span> またはクリックしてアップロード",
+        "dropPrompt": "<span class=\"font-medium text-indigo-400\">画像をドロップ</span>、貼り付け (Ctrl+V) またはクリック",
         "dropSubtext": "JPG, PNG, WEBP 対応 (一括処理可)",
         "footerCredits": "アンクル・ケビン制作",
         "footerLocal": "ブラウザ上でローカルに動作します。",
@@ -137,7 +140,8 @@ const translations = {
         "lightboxClose": "閉じる",
         "formatLabel": "形式:",
         "formatPng": "PNG (可逆)",
-        "formatJpeg": "JPEG (圧縮)"
+        "formatJpeg": "JPEG (圧縮)",
+        "zipFolderName": "gemini_透かし除去"
     },
     "ko": {
         "appTitle": "Gemini 워터마크 제거기",
@@ -145,13 +149,13 @@ const translations = {
         "featureFree": "✨ 무료 & 빠른 속도",
         "featureLocal": "💻 로컬 처리",
         "featureQuality": "🖼️ 원본 화질 유지",
-        "downloadAll": "모두 다운로드",
+        "downloadAll": "모두 다운로드 (ZIP)",
         "logoTitle": "🎨 사용자 지정 로고 (선택 사항)",
         "clearLogo": "로고 지우기",
         "uploadLogo": "로고 업로드 클릭",
         "opacityLabel": "투명도:",
         "scaleLabel": "크기:",
-        "dropPrompt": "<span class=\"font-medium text-indigo-400\">이미지를 여기에 드롭</span> 또는 클릭하여 업로드",
+        "dropPrompt": "<span class=\"font-medium text-indigo-400\">이미지 드롭</span>, 붙여넣기 (Ctrl+V) 또는 클릭",
         "dropSubtext": "JPG, PNG, WEBP 지원 (일괄 처리 가능)",
         "footerCredits": "Uncle Kevin 제작",
         "footerLocal": "브라우저에서 로컬로 실행됩니다.",
@@ -172,6 +176,7 @@ const translations = {
         "lightboxClose": "닫기",
         "formatLabel": "형식:",
         "formatPng": "PNG (무손실)",
-        "formatJpeg": "JPEG (압축)"
+        "formatJpeg": "JPEG (압축)",
+        "zipFolderName": "gemini_워터마크_제거"
     }
 };

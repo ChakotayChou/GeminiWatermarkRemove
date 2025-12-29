@@ -331,7 +331,7 @@ class ImageProcessor {
                     </button>
                 </div>
             </div>
-            <div style="text-align: center; color: var(--text-secondary); font-size: 0.9rem;">
+            <div class="filename-display" title="${this.file.name}" style="text-align: center; color: var(--text-secondary); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">
                 ${this.file.name}
             </div>
         `;
@@ -599,11 +599,12 @@ class ImageProcessor {
             if (!blob) return;
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
-            // Suggest filename: "original_clean.png" or "original_clean.jpg"
+            // Construct filename
             const nameParts = this.file.name.split('.');
             nameParts.pop(); // remove extension
-            const suffix = Localization.get('cleanSuffix');
+            const suffix = Localization.get('cleanSuffix') || '_clean';
             link.download = `${nameParts.join('.')}${suffix}${ext}`;
+
             link.href = url;
             link.click();
             setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -684,16 +685,117 @@ fileInput.addEventListener('change', (e) => {
     handleFiles(e.target.files);
 });
 
+// =============================================================================
+// Clipboard Paste Support
+// =============================================================================
+
+window.addEventListener('paste', (e) => {
+    if (!e.clipboardData || !e.clipboardData.items) return;
+
+    const items = e.clipboardData.items;
+    const files = [];
+
+    for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+            const blob = items[i].getAsFile();
+            // Assign a default name for pasted images
+            // You can enhance this by timestamp or count based names
+            if (!blob.name || blob.name === 'image.png') {
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                blob.name = `pasted-image-${timestamp}.png`;
+            }
+            files.push(blob);
+        }
+    }
+
+    if (files.length > 0) {
+        handleFiles(files);
+    }
+});
+
+
 // Download All
-downloadAllBtn.addEventListener('click', () => {
-    let delay = 0;
-    STATE.processors.forEach(p => {
-        // Stagger downloads to prevent browser blocking
-        setTimeout(() => {
-            p.download();
-        }, delay);
-        delay += 300;
-    });
+downloadAllBtn.addEventListener('click', async () => {
+    // Check if JSZip is loaded
+    if (typeof JSZip === 'undefined') {
+        // Fallback to sequential download
+        let delay = 0;
+        STATE.processors.forEach(p => {
+            setTimeout(() => {
+                p.download();
+            }, delay);
+            delay += 300;
+        });
+        return;
+    }
+
+    // ZIP Batch Download
+    const zip = new JSZip();
+    const folderName = Localization.get('zipFolderName') || 'processed_images';
+    const folder = zip.folder(folderName);
+    const usedNames = new Set(); // To ensure uniqueness in ZIP
+
+    // Disable button to prevent double clicks
+    downloadAllBtn.disabled = true;
+    const originalBtnText = downloadAllBtn.innerHTML;
+    downloadAllBtn.innerHTML = '<span>Packaging...</span>';
+
+    try {
+        const promises = STATE.processors.map(p => {
+            // 確保我們拿到的是已經處理過的圖片 Canvas
+            if (!p.state.processedImageData) return null;
+
+            return new Promise((resolve) => {
+                const format = STATE.downloadFormat;
+                const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png';
+                const ext = format === 'jpeg' ? '.jpg' : '.png';
+                const quality = format === 'jpeg' ? 0.85 : undefined;
+
+                // Construct filename
+                const nameParts = p.file.name.split('.');
+                nameParts.pop(); // remove extension
+                const suffix = Localization.get('cleanSuffix') || '_clean';
+                let filename = `${nameParts.join('.')}${suffix}${ext}`;
+
+                // Ensure uniqueness in ZIP
+                if (usedNames.has(filename)) {
+                    let counter = 1;
+                    const basePart = filename.substring(0, filename.lastIndexOf(suffix));
+                    while (usedNames.has(filename)) {
+                        filename = `${basePart}_${counter}${suffix}${ext}`;
+                        counter++;
+                    }
+                }
+                usedNames.add(filename);
+
+                p.elements.canvas.toBlob((blob) => {
+                    if (blob) {
+                        folder.file(filename, blob);
+                    }
+                    resolve();
+                }, mimeType, quality);
+            });
+        });
+
+        await Promise.all(promises);
+
+        const content = await zip.generateAsync({ type: "blob" });
+        const url = URL.createObjectURL(content);
+
+        const link = document.createElement('a');
+        link.download = 'gemini_watermark_removed.zip';
+        link.href = url;
+        link.click();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    } catch (err) {
+        console.error("ZIP generation failed:", err);
+        alert("Failed to create ZIP file. Falling back to individual downloads.");
+    } finally {
+        downloadAllBtn.disabled = false;
+        downloadAllBtn.innerHTML = originalBtnText;
+    }
 });
 
 // Download Format Selector

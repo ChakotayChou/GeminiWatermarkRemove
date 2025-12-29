@@ -3,10 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="appTitle">Gemini 浮水印去除器</title>
+    <meta name="viewport" content="width=device-width, initial=" 1.0">
+    <title>Gemini Watermark Remover</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
+
+    <!-- JSZip for batch download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -205,6 +209,20 @@
 
     <script src="translations.js"></script>
     <script src="script.js"></script>
+    <script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
 </body>
 
 </html>

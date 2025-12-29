@@ -1,5 +1,7 @@
 # Gemini Watermark Remover
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 [English](README.md) | [繁體中文](README_zh-TW.md) | [简体中文](README_zh-CN.md) | [日本語](README_ja.md) | [한국어](README_ko.md)
 
 这是一个强大的网页工具，专门设计用于去除由 Google Gemini 生成图片中的水印。此工具完全在浏览器端运行，无需将图片上传至服务器，确保您的隐私安全。
@@ -24,6 +26,9 @@
   - **自动检测**：根据图片分辨率自动判断水印大小。
   - **手动选择**：可强制选择小（48px）或大（96px）水印模式以应对特殊情况。
 - **💾 高画质下载**：一键下载处理后的图片，支持 PNG（无损）或 JPEG（压缩）格式。
+- **📱 PWA 支持**：支持安装为桌面/手机应用程序，并可离线使用。
+- **📋 剪贴板粘贴**：支持直接粘贴 (Ctrl+V) 截图或图片进行处理。
+- **📦 批量 ZIP 下载**：下载多张图片时自动打包为 ZIP 文件，方便整理。
 - **🌐 多语言支持**：界面支持英文、繁体中文、简体中文、日文及韩文。
 
 ## 🛠️ 技术原理
@@ -62,6 +67,11 @@
 
    然后在浏览器访问 `http://localhost:8000`。
 
-## 📄 授权
+## 🙏 致谢 (Acknowledgements)
 
-此项目仅供研究与学习使用。使用此工具处理图片时请遵守相关法律法规。
+特别感谢 [GeminiWatermarkTool](https://github.com/allenk/GeminiWatermarkTool) 项目提供的重要信息与灵感。
+
+## 📄 授权条款 (License)
+
+本道目采用 MIT 授权条款。详细内容请参阅 [LICENSE](LICENSE) 文件。
+

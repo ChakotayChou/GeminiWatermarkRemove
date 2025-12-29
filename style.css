@@ -338,16 +338,15 @@ body.has-files .app-card {
 /* Results Grid */
 .results-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
+  /* PC Default: 4 columns fixed */
   gap: 1.5rem;
   width: 100%;
 }
 
 @media (min-width: 1200px) {
-  .results-container {
-    grid-template-columns: repeat(4, 1fr);
-  }
 
+  /* Override unnecessary but kept for explicit clarity or max-width changes */
   .container {
     max-width: 1400px;
   }
@@ -356,12 +355,14 @@ body.has-files .app-card {
 @media (min-width: 768px) and (max-width: 1199px) {
   .results-container {
     grid-template-columns: repeat(2, 1fr);
+    /* Tablet: 2 columns */
   }
 }
 
 @media (max-width: 767px) {
   .results-container {
     grid-template-columns: 1fr;
+    /* Mobile: 1 column fixed */
   }
 
   /* Mobile: Make nav relative and center it */
@@ -565,6 +566,8 @@ body.has-files .app-card {
   gap: 1rem;
   animation: fadeIn 0.3s ease-out;
   height: 100%;
+  min-width: 0;
+  /* Critical: allows grid item to shrink below content size */
 }
 
 [data-theme="light"] .image-card {
@@ -586,6 +589,8 @@ body.has-files .app-card {
 /* Canvas Wrapper inside Card */
 .image-wrapper {
   position: relative;
+  width: 100%;
+  /* Ensure it fills the card width */
   background-color: #000;
   border-radius: 0.5rem;
   overflow: hidden;
@@ -670,10 +675,26 @@ body.has-files .app-card {
 }
 
 .actions .btn {
-  flex: 1;
   justify-content: center;
   padding: 0.5rem;
   font-size: 0.9rem;
+  white-space: nowrap;
+  /* Prevent text wrapping */
+}
+
+/* Icon-only buttons: rigid width */
+.actions .compare-btn,
+.actions .remove-btn {
+  flex: 0 0 auto;
+  width: 42px;
+  /* Fixed width for icon buttons */
+  padding: 0.5rem 0;
+  /* Adjust padding */
+}
+
+/* Download button: take remaining space */
+.actions .download-btn {
+  flex: 1;
 }
 
 .alpha-value {

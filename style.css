@@ -386,6 +386,118 @@ body.has-files .app-card {
   .subtitle {
     font-size: 0.9rem;
   }
+
+  /* ========================================
+     Mobile: Global Actions (Format + Download)
+     ======================================== */
+  .global-actions {
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: 0;
+  }
+
+  .format-selector {
+    flex: 1;
+  }
+
+  .format-selector label {
+    display: none;
+    /* Hide "格式:" label on mobile */
+  }
+
+  .format-selector select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  /* Download All Button: Icon only on mobile */
+  #downloadAllBtn {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  #downloadAllBtn span[data-i18n] {
+    display: none;
+    /* Hide text, keep icon */
+  }
+
+  #downloadAllBtn svg {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+  }
+
+  /* ========================================
+     Mobile: Logo Settings (Compact)
+     ======================================== */
+  .logo-settings {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .logo-header {
+    margin-bottom: 0.5rem;
+  }
+
+  .logo-title {
+    font-size: 0.9rem;
+  }
+
+  .logo-content {
+    gap: 0.75rem;
+  }
+
+  .logo-preview {
+    width: 60px;
+    height: 60px;
+  }
+
+  .logo-preview .upload-text {
+    display: none;
+    /* Hide upload text on mobile, icon only */
+  }
+
+  .logo-controls {
+    padding: 0 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .logo-control-group {
+    margin-bottom: 0.5rem;
+  }
+
+  .logo-control-group label {
+    font-size: 0.8rem;
+  }
+
+  /* ========================================
+     Mobile: Card Controls (Per Image)
+     ======================================== */
+  .card-controls {
+    padding-top: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .card-options .control-group select {
+    padding: 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .slider-group label {
+    font-size: 0.8rem;
+  }
+
+  .actions .btn {
+    padding: 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .actions .download-btn span[data-i18n] {
+    display: none;
+    /* Icon only on mobile */
+  }
 }
 
 .drop-icon {

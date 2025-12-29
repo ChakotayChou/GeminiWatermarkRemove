@@ -455,14 +455,30 @@ body.has-files .app-card {
 
   .logo-header {
     margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   .logo-title {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    flex: 1;
+  }
+
+  /* Clear Logo Button: X icon only on mobile */
+  #clearLogoBtn {
+    padding: 0.4rem;
+  }
+
+  #clearLogoBtn span[data-i18n] {
+    display: none;
+    /* Hide text, keep X icon */
   }
 
   .logo-content {
-    gap: 0.75rem;
+    flex-direction: column;
+    /* Stack vertically on mobile */
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 
   .logo-preview {
@@ -476,7 +492,9 @@ body.has-files .app-card {
   }
 
   .logo-controls {
-    padding: 0 0.5rem;
+    width: 100%;
+    /* Full width for sliders */
+    padding: 0;
     margin-top: 0.5rem;
   }
 
@@ -487,6 +505,7 @@ body.has-files .app-card {
   .logo-control-group label {
     font-size: 0.8rem;
   }
+
 
   /* ========================================
      Mobile: Card Controls (Per Image)

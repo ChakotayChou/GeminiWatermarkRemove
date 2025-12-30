@@ -26,7 +26,7 @@ A powerful web tool designed to remove localized watermarks from images generate
   - **Auto Detect**: Automatically determines watermark size based on image resolution.
   - **Manual Selection**: Force "Small" (48px) or "Large" (96px) mode for special cases.
 - **💾 High Quality Download**: Download processed images in PNG (Lossless) or JPEG (Compressed) format.
-- **📱 PWA Support**: Installable as a desktop/mobile app with offline capabilities.
+- **🖥️ Desktop Application**: Native Tauri desktop app available for offline use with better performance.
 - **📋 Clipboard Paste**: Support directly pasting (Ctrl+V) screenshots or images.
 - **📦 Batch ZIP Download**: Automatically packages multiple images into a Single ZIP file.
 - **🌐 Multi-language Support**: Interface available in English, Traditional Chinese, Simplified Chinese, Japanese, and Korean.

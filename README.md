@@ -65,6 +65,37 @@ This is a static web project requiring no complex backend environment.
 
    Then visit `http://localhost:8000` in your browser.
 
+## 🖥️ Desktop Application (Tauri)
+
+In addition to the web version, we also provide a native desktop application built with [Tauri](https://tauri.app/).
+
+### Features
+- **Offline Support**: Works without internet connection
+- **Native Performance**: Faster file handling via native APIs
+- **No Browser Required**: Runs as a standalone application
+
+### Download
+> Coming soon - Check the [Releases](https://github.com/kevintsai1202/GeminiWatermarkRemove/releases) page for installers.
+
+### Build from Source
+```bash
+# Prerequisites: Rust, Node.js
+cargo install tauri-cli
+
+# Clone and build
+git clone https://github.com/kevintsai1202/GeminiWatermarkRemove.git
+cd GeminiWatermarkRemove
+git checkout feature/tauri-app
+
+# Development mode
+cargo tauri dev
+
+# Build installer
+cargo tauri build
+```
+Output: `src-tauri/target/release/bundle/`
+
+
 ## 🙏 Acknowledgements
 
 Special thanks to [GeminiWatermarkTool](https://github.com/allenk/GeminiWatermarkTool) for providing valuable information and inspiration for this project.

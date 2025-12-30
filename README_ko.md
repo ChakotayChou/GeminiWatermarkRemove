@@ -65,6 +65,37 @@ Google Gemini가 생성한 이미지의 워터마크를 제거하도록 특별�
 
    그런 다음 브라우저에서 `http://localhost:8000`에 접속하십시오.
 
+## 🖥️ 데스크톱 애플리케이션 (Tauri)
+
+웹 버전 외에도 [Tauri](https://tauri.app/)로 구축된 네이티브 데스크톱 애플리케이션을 제공합니다.
+
+### 특징
+- **오프라인 지원**: 인터넷 연결 없이 작동
+- **네이티브 성능**: 네이티브 API를 통한 빠른 파일 처리
+- **브라우저 불필요**: 독립 실행형 애플리케이션으로 실행
+
+### 다운로드
+> 곧 출시 예정 - 설치 프로그램은 [Releases](https://github.com/kevintsai1202/GeminiWatermarkRemove/releases) 페이지를 확인하세요.
+
+### 소스에서 빌드
+```bash
+# 전제 조건: Rust, Node.js
+cargo install tauri-cli
+
+# 클론 및 빌드
+git clone https://github.com/kevintsai1202/GeminiWatermarkRemove.git
+cd GeminiWatermarkRemove
+git checkout feature/tauri-app
+
+# 개발 모드
+cargo tauri dev
+
+# 설치 프로그램 빌드
+cargo tauri build
+```
+출력 위치: `src-tauri/target/release/bundle/`
+
+
 ## 🙏 감사의 말 (Acknowledgements)
 
 이 프로젝트에 귀중한 정보와 영감을 제공해 준 [GeminiWatermarkTool](https://github.com/allenk/GeminiWatermarkTool) 에 특별한 감사를 전합니다.

@@ -65,6 +65,37 @@
 
    然後在瀏覽器訪問 `http://localhost:8000`。
 
+## 🖥️ 桌面應用程式 (Tauri)
+
+除了網頁版本，我們也提供使用 [Tauri](https://tauri.app/) 建置的原生桌面應用程式。
+
+### 特色功能
+- **離線使用**：無需網路連線即可運作
+- **原生效能**：透過原生 API 提供更快的檔案處理
+- **獨立運行**：無需瀏覽器即可執行
+
+### 下載
+> 即將推出 - 請至 [Releases](https://github.com/kevintsai1202/GeminiWatermarkRemove/releases) 頁面下載安裝包。
+
+### 從原始碼建置
+```bash
+# 前置需求：Rust、Node.js
+cargo install tauri-cli
+
+# 複製並建置
+git clone https://github.com/kevintsai1202/GeminiWatermarkRemove.git
+cd GeminiWatermarkRemove
+git checkout feature/tauri-app
+
+# 開發模式
+cargo tauri dev
+
+# 建置安裝包
+cargo tauri build
+```
+輸出位置：`src-tauri/target/release/bundle/`
+
+
 ## 🙏 致謝 (Acknowledgements)
 
 特別感謝 [GeminiWatermarkTool](https://github.com/allenk/GeminiWatermarkTool) 專案提供的重要資訊與靈感。

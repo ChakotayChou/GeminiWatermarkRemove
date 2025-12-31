@@ -228,6 +228,29 @@
         <div class="lightbox-caption" data-i18n="lightboxCaption">長按顯示原圖</div>
     </div>
 
+    <!-- Tauri External Link Handler -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // Check if running in Tauri
+            // In Tauri v2 withGlobalTauri: true, the core API is available at window.__TAURI__.core
+            if (window.__TAURI__) {
+                const invoke = window.__TAURI__.core.invoke;
+                document.body.addEventListener('click', (e) => {
+                    const target = e.target.closest('a');
+                    if (target && target.target === '_blank') {
+                        e.preventDefault();
+                        // Use invoke directly to bypass missing global shell object
+                        invoke('plugin:shell|open', { path: target.href })
+                            .catch((err) => {
+                                console.error('Failed to open link:', err);
+                                alert('Failed to open link: ' + err);
+                            });
+                    }
+                });
+            }
+        });
+    </script>
+
     <script src="translations.js"></script>
     <script src="script.js"></script>
 </body>
